@@ -1,9 +1,7 @@
 package team2.apptive.tabmemo;
 
-
 import java.util.ArrayList;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class BaseExpandableAdapter extends BaseExpandableListAdapter{
+public class BaseExpandableAdapter extends BaseExpandableListAdapter {
 
   private ArrayList<String> groupList = null;
   private ArrayList<ArrayList<String>> childList = null;
@@ -55,8 +53,8 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
     if(v == null){
       viewHolder = new ViewHolder();
       v = inflater.inflate(R.layout.list_item, parent, false);
-      viewHolder.tv_groupName = (TextView) v.findViewById(R.id.tv_group);
-      viewHolder.iv_image = (ImageView) v.findViewById(R.id.iv_image);
+    //  viewHolder.tv_groupName = (TextView) v.findViewById(R.id.tv_group);
+   //   viewHolder.iv_image = (ImageView) v.findViewById(R.id.iv_image);
       v.setTag(viewHolder);
     }else{
       viewHolder = (ViewHolder)v.getTag();
