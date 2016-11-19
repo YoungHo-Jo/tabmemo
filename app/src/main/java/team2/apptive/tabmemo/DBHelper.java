@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     // new table
     db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "title TEXT, memo TEXT, childmemo TEXT, category TEXT, stared INTEGER, time INTEGER, position INTEGER);");
+      "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time INTEGER, position INTEGER);");
 
   }
 
@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void newInsert(String title, String category) {
     SQLiteDatabase db = getWritableDatabase();
     long time = System.currentTimeMillis();
-    db.execSQL("insert into MEMO values(null, '" + title + "', null, '" + category + "', 0, " + time + ");");
+    db.execSQL("insert into MEMO values(null, '" + title + "', null, '" + category + "', 0, " + time + ", " + time + ");");
     db.close();
   }
 
@@ -65,6 +65,12 @@ public class DBHelper extends SQLiteOpenHelper {
     db.close();
   }
 
+  public void updateChileMemo(String memo, long time) {
+    SQLiteDatabase db = getWritableDatabase();
+    db.execSQL("update MEMO set childMemo = '" + memo + "' where time = " + time + ";");
+    db.close();
+  }
+
   public void updateStared(boolean isStared, long time) {
     SQLiteDatabase db = getWritableDatabase();
     int stared = (isStared) ? 1 : 0;
@@ -75,6 +81,12 @@ public class DBHelper extends SQLiteOpenHelper {
   public void updateCategory(String category, long time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set category = '" + category + "' where time = " + time + ";");
+    db.close();
+  }
+
+  public void updateCategory(int position, long time) {
+    SQLiteDatabase db = getWritableDatabase();
+    db.execSQL("update MEMO set position = '" + position + "' where time = " + time + ";");
     db.close();
   }
 

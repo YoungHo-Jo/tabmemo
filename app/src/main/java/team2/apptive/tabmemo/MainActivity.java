@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements DndListView.DragL
 
   }
 
-
   // drop event 발생 시 구현현
   @Override
   public void drop(int from, int to) {
