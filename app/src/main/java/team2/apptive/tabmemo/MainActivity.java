@@ -83,14 +83,10 @@ public class MainActivity extends AppCompatActivity {
 //    mGroupList.add("장보기");
 //
 //    mChildListContent.add("트와이스");
-//    mChildListContent.add("죽을죄를 지었습니다.제때제때 하겠습니다.한번만봐주십시오.장보기.TT ");
-//    mChildListContent.add("이러지도 못하는데 저러지도 못하네 \n" +
-//      "그저 바라보며 ba-ba-ba-baby \n" +
-//      "매일 상상만 해 이름과 함께 \n ");
+
 //
 //    mChildList.add(mChildListContent);
-//    mChildList.add(mChildListContent);
-//    mChildList.add(mChildListContent);
+
 //
 //    DndListView listView = (DndListView) findViewById(R.id.list);
 //    listView.setDragListener(this);
