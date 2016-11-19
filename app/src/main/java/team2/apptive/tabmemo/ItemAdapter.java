@@ -5,6 +5,7 @@ package team2.apptive.tabmemo;
  */
 
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
   private int mGrabHandleId;
   private boolean mDragOnLongPress;
   private View view = null;
+  private DBHelper dbHelper = null;
 
   // grabHandledID를 통해서 눌렀을때 동작할 위치 지정 가능
   public ItemAdapter(ArrayList<Pair<Long, String>> list, int layoutId, int grabHandleId, boolean dragOnLongPress) {
@@ -43,9 +45,18 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
     super.onBindViewHolder(holder, position);
-    String text = mItemList.get(position).second;
-    //holder.mText.setText(text);
-    //holder.itemView.setTag(text);
+    String id = mItemList.get(position).second;
+    System.out.println(id);
+
+
+    dbHelper = new DBHelper(view.getContext(), "Memo.db", null, 1);
+
+    holder.mTitle.setText(dbHelper.getTitle(id));
+    holder.mMemo.setText(dbHelper.getMemo(id));
+
+    System.out.println("onBIndViewHolder called!");
+
+    dbHelper.close();
 
   }
 
@@ -56,11 +67,15 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
   }
 
   public class ViewHolder extends DragItemAdapter.ViewHolder {
-    public TextView mText;
+    public TextView mTitle;
+    public TextView mMemo;
 
     public ViewHolder(final View itemView) {
       super(itemView, mGrabHandleId, mDragOnLongPress);
-      mText = (TextView) itemView.findViewById(R.id.text);
+      mTitle = (TextView) itemView.findViewById(R.id.tv_title);
+      mMemo = (TextView) itemView.findViewById(R.id.tv_memo);
+
+      System.out.println("ViewHolder Constructor called!!");
     }
 
     @Override

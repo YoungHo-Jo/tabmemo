@@ -196,6 +196,8 @@ public abstract class DragItemAdapter<T, VH extends DragItemAdapter.ViewHolder> 
         }
 
         public void onItemClicked(View view) {
+            System.out.println("'ItemAdapter' onItemClicked !!)");
+
         }
 
         public boolean onItemLongClicked(View view) {

@@ -5,6 +5,7 @@ package team2.apptive.tabmemo;
  */
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,6 @@ public class ListFragment extends Fragment {
 
   private ArrayList<Pair<Long, String>> mItemArray;
   private DragListView mDragListView;
- // private MySwipeRefreshLayout mRefreshLayout;
 
   private View view = null;
   private View itemView = null;
@@ -54,21 +54,18 @@ public class ListFragment extends Fragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
     view = inflater.inflate(R.layout.list_layout, container, false);
-    itemView = inflater.inflate(R.layout.list_item, container, false);
-   // mRefreshLayout = (MySwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+
     mDragListView = (DragListView) view.findViewById(R.id.drag_list_view);
     mDragListView.getRecyclerView().setVerticalScrollBarEnabled(true);
     mDragListView.setDisableReorderWhenDragging(false);
     mDragListView.setDragListListener(new DragListView.DragListListenerAdapter() {
       @Override
       public void onItemDragStarted(int position) {
-
         Toast.makeText(mDragListView.getContext(), "Start - position: " + position, Toast.LENGTH_SHORT).show();
       }
 
       @Override
       public void onItemDragEnded(int fromPosition, int toPosition) {
-       // mRefreshLayout.setEnabled(true);
         if (fromPosition != toPosition) {
 
           Toast.makeText(mDragListView.getContext(), "End - position: " + toPosition, Toast.LENGTH_SHORT).show();
@@ -77,24 +74,31 @@ public class ListFragment extends Fragment {
       }
     });
 
+
+
+//    mItemArray = new ArrayList<>();
+//    for (int i = 0; i < 40; i++) {
+//      mItemArray.add(new Pair<>(Long.valueOf(i), "Item " + i));
+//    }
+
+    final DBHelper dbHelper = new DBHelper(getContext(), "Memo.db", null, 1);
+    dbHelper.newInsert("title 1", "");
+    dbHelper.newInsert("title 2", "");
+    dbHelper.newInsert("title 3", "");
+    dbHelper.newInsert("title 4", "");
+    dbHelper.newInsert("title 5", "");
+
     mItemArray = new ArrayList<>();
-    for (int i = 0; i < 40; i++) {
-      mItemArray.add(new Pair<>(Long.valueOf(i), "Item " + i));
+    Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO", null);
+    while(cursor.moveToNext()) {
+      String pos = cursor.getString(7);
+
+      long lpos = Long.parseLong(pos);
+      mItemArray.add(new Pair<>(lpos, cursor.getString(6)));
     }
 
-//    mRefreshLayout.setScrollingView(mDragListView.getRecyclerView());
-//    mRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getContext(), R.color.app_color));
-//    mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//      @Override
-//      public void onRefresh() {
-//        mRefreshLayout.postDelayed(new Runnable() {
-//          @Override
-//          public void run() {
-//            mRefreshLayout.setRefreshing(false);
-//          }
-//        }, 2000);
-//      }
-//    });
+    dbHelper.printData();
+
 
     setupListRecyclerView();
     return view;
@@ -103,45 +107,7 @@ public class ListFragment extends Fragment {
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-   // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("List and Grid");
   }
-
-//  @Override
-//  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//    super.onCreateOptionsMenu(menu, inflater);
-//    inflater.inflate(R.menu.menu_list, menu);
-//  }
-
-//  @Override
-//  public void onPrepareOptionsMenu(Menu menu) {
-//    super.onPrepareOptionsMenu(menu);
-//    menu.findItem(R.id.action_disable_drag).setVisible(mDragListView.isDragEnabled());
-//    menu.findItem(R.id.action_enable_drag).setVisible(!mDragListView.isDragEnabled());
-//  }
-
-//  @Override
-//  public boolean onOptionsItemSelected(MenuItem item) {
-//    switch (item.getItemId()) {
-//      case R.id.action_disable_drag:
-//        mDragListView.setDragEnabled(false);
-//        getActivity().supportInvalidateOptionsMenu();
-//        return true;
-//      case R.id.action_enable_drag:
-//        mDragListView.setDragEnabled(true);
-//        getActivity().supportInvalidateOptionsMenu();
-//        return true;
-//      case R.id.action_list:
-//        setupListRecyclerView();
-//        return true;
-//      case R.id.action_grid_vertical:
-//        setupGridVerticalRecyclerView();
-//        return true;
-//      case R.id.action_grid_horizontal:
-//        setupGridHorizontalRecyclerView();
-//        return true;
-//    }
-//    return super.onOptionsItemSelected(item);
-//  }
 
   private void setupListRecyclerView() {
     mDragListView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -155,22 +121,6 @@ public class ListFragment extends Fragment {
     System.out.println("setupListRecyclerView Called!");
   }
 
-//  private void setupGridVerticalRecyclerView() {
-//    mDragListView.setLayoutManager(new GridLayoutManager(getContext(), 4));
-//    ItemAdapter listAdapter = new ItemAdapter(mItemArray, R.layout.grid_item, R.id.item_layout, true);
-//    mDragListView.setAdapter(listAdapter, true);
-//    mDragListView.setCanDragHorizontally(true);
-//    mDragListView.setCustomDragItem(null);
-//
-//  }
-
-//  private void setupGridHorizontalRecyclerView() {
-//    mDragListView.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.HORIZONTAL, false));
-//    ItemAdapter listAdapter = new ItemAdapter(mItemArray, R.layout.grid_item, R.id.item_layout, true);
-//    mDragListView.setAdapter(listAdapter, true);
-//    mDragListView.setCanDragHorizontally(true);
-//    mDragListView.setCustomDragItem(null);
-//  }
 
   private static class MyDragItem extends DragItem {
 
@@ -180,12 +130,14 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onBindDragView(View clickedView, View dragView) {
-      // CharSequence text = ((TextView) clickedView.findViewById(R.id.text)).getText();
-     // ((TextView) dragView.findViewById(R.id.text)).setText(text);
 
       System.out.println("onBindDragView: 옮기기 시작할 때 불러온다");
-      dragView.findViewById(R.id.tv_memo).setVisibility(View.INVISIBLE);
-      dragView.findViewById(R.id.tv_childMemo).setVisibility(View.INVISIBLE);
+//      dragView.findViewById(R.id.tv_memo).setVisibility(View.INVISIBLE);
+//      dragView.findViewById(R.id.tv_childMemo).setVisibility(View.INVISIBLE);
+      CharSequence text = ((TextView) clickedView.findViewById(R.id.tv_title)).getText();
+      ((TextView) dragView.findViewById(R.id.tv_title)).setText(text);
+
+
       dragView.setBackgroundColor(dragView.getResources().getColor(R.color.colorPrimaryDark));
     }
   }
