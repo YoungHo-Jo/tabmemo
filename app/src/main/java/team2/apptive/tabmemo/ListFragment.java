@@ -62,17 +62,6 @@ public class ListFragment extends Fragment {
     mDragListView.setDragListListener(new DragListView.DragListListenerAdapter() {
       @Override
       public void onItemDragStarted(int position) {
-      //  mRefreshLayout.setEnabled(false);
-        Button btDrag = (Button) itemView.findViewById(R.id.bt_drag);
-        btDrag.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            TextView tvMemo = (TextView) itemView.findViewById(R.id.tv_memo);
-            tvMemo.setVisibility(View.INVISIBLE);
-            setupListRecyclerView();
-          }
-        });
-
 
         Toast.makeText(mDragListView.getContext(), "Start - position: " + position, Toast.LENGTH_SHORT).show();
       }
@@ -85,15 +74,6 @@ public class ListFragment extends Fragment {
           Toast.makeText(mDragListView.getContext(), "End - position: " + toPosition, Toast.LENGTH_SHORT).show();
         }
 
-        Button btDrag = (Button) itemView.findViewById(R.id.bt_drag);
-        btDrag.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            TextView tvMemo = (TextView) itemView.findViewById(R.id.tv_memo);
-            tvMemo.setVisibility(View.VISIBLE);
-            setupListRecyclerView();
-          }
-        });
       }
     });
 
@@ -171,6 +151,8 @@ public class ListFragment extends Fragment {
     mDragListView.setCanDragHorizontally(false);
     mDragListView.setCustomDragItem(new MyDragItem(getContext(), R.layout.list_item));
 
+
+    System.out.println("setupListRecyclerView Called!");
   }
 
 //  private void setupGridVerticalRecyclerView() {
@@ -201,6 +183,7 @@ public class ListFragment extends Fragment {
       // CharSequence text = ((TextView) clickedView.findViewById(R.id.text)).getText();
      // ((TextView) dragView.findViewById(R.id.text)).setText(text);
 
+      System.out.println("onBindDragView: 옮기기 시작할 때 불러온다");
       dragView.findViewById(R.id.tv_memo).setVisibility(View.INVISIBLE);
       dragView.findViewById(R.id.tv_childMemo).setVisibility(View.INVISIBLE);
       dragView.setBackgroundColor(dragView.getResources().getColor(R.color.colorPrimaryDark));
