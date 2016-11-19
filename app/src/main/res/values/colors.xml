@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="dragndrop_background">#e0103010</color>
+    <color name="list_item_background">#AACCCCCC</color>
 </resources>

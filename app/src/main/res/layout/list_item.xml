@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent" >
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" >
 
     <LinearLayout
-        android:id="@+id/list_item0"
+        android:orientation="horizontal"
+        android:id="@+id/ll_listItem"
         android:background="#c1c1c1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:weightSum="1">
-        <ImageView
-            android:id="@+id/iv_image"
+        android:layout_height="60dp">
+        <Button
+            android:id="@+id/bt_expand"
             android:background="#FFC1C1C1"
             android:layout_width="0dp"
             android:layout_height="60dp"
@@ -21,23 +22,44 @@
             />
 
         <TextView
-            android:id="@+id/tv_group"
+            android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:text = "#시장"
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="30dp"
             android:layout_weight="0.66"
             />
 
-        <ImageView
-            android:id="@+id/iv_image2"
+        <Button
+            android:id="@+id/bt_drag"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:textSize="20dip"
             android:layout_weight="0.17"
             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#d17e7e">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tv_memo"
+            android:background="#4145b9"
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_childMemo"
+            android:background="#d4ef3b"
+            android:visibility="visible"/>
+
+
     </LinearLayout>
 
 </LinearLayout>

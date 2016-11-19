@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:orientation="vertical" >
+              android:orientation="vertical"
+                android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,18 +40,34 @@
             android:layout_height="60dp"
             android:layout_weight="0.0"/>
 
-
     </LinearLayout>
 
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<ExpandableListView-->
+            <!--android:id="@+id/elv_list"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:groupIndicator="@null"-->
+            <!--/>-->
+    <!--</LinearLayout>-->
+
     <LinearLayout
+        android:id="@+id/pos"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ExpandableListView
-            android:id="@+id/elv_list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:groupIndicator="@null"
-            />
+        <!--<team2.apptive.tabmemo.DndListView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/dndList_memoList"-->
+            <!--android:drawSelectorOnTop="false"-->
+            <!--android:cacheColorHint="#00000000">-->
+
+        <!--</team2.apptive.tabmemo.DndListView>-->
+
+
     </LinearLayout>
 </LinearLayout>
