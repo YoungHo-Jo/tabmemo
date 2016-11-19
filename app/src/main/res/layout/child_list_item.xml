@@ -27,6 +27,16 @@
             android:gravity="center"
             android:layout_weight="0.65"
             />
+        <TextView
+            android:id="@+id/child_text2"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:text = "바나나"
+            android:textSize="30dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="0.65"
+            />
 
         <ImageView
             android:background="@android:color/white"
