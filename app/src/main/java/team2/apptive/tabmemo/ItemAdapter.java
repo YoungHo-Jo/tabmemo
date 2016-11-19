@@ -8,10 +8,13 @@ import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.woxthebox.draglistview.DragItemAdapter;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -20,6 +23,7 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
   private int mLayoutId;
   private int mGrabHandleId;
   private boolean mDragOnLongPress;
+  private View view = null;
 
   // grabHandledID를 통해서 눌렀을때 동작할 위치 지정 가능
   public ItemAdapter(ArrayList<Pair<Long, String>> list, int layoutId, int grabHandleId, boolean dragOnLongPress) {
@@ -32,7 +36,7 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext()).inflate(mLayoutId, parent, false);
+    view = LayoutInflater.from(parent.getContext()).inflate(mLayoutId, parent, false);
     return new ViewHolder(view);
   }
 
@@ -42,7 +46,9 @@ public class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter
     String text = mItemList.get(position).second;
     //holder.mText.setText(text);
     //holder.itemView.setTag(text);
+
   }
+
 
   @Override
   public long getItemId(int position) {
