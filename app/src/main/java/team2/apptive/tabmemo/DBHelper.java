@@ -48,51 +48,49 @@ public class DBHelper extends SQLiteOpenHelper {
 
   public void newInsert(String title, String category) {
     SQLiteDatabase db = getWritableDatabase();
-    long time = System.currentTimeMillis();
-    db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time + ", " + time + ");");
+    Long time = System.currentTimeMillis();
+    db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time.toString() + ", " + time.toString() + ");");
     db.close();
   }
 
-  public void updateTitle(String title, long time) {
+  public void updateTitle(String title, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set title = '" + title + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updateMemo(String memo, long time) {
+  public void updateMemo(String memo, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set memo = '" + memo + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updateChileMemo(String memo, long time) {
+  public void updateChileMemo(String memo, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set childMemo = '" + memo + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updateStared(boolean isStared, long time) {
+  public void updateStared(boolean isStared, String time) {
     SQLiteDatabase db = getWritableDatabase();
     int stared = (isStared) ? 1 : 0;
     db.execSQL("update MEMO set stared = " + stared + " where time = " + time + ";");
     db.close();
   }
 
-  public void updateCategory(String category, long time) {
+  public void updateCategory(String category, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set category = '" + category + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updatePosition(long position, long time) {
+  public void updatePosition(String position, String time) {
     SQLiteDatabase db = getWritableDatabase();
-    Long llong = new Long(time);
-    Long pp = new Long(position);
-    db.execSQL("update MEMO set position = " + pp.toString() + " where time = '" + llong.toString() + "';");
+    db.execSQL("update MEMO set position = " + position + " where time = " + time + ";");
     db.close();
   }
 
-  public void deleteByTime(long time) {
+  public void deleteByTime(String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("delete form MEMO where time = " + time + ";");
     db.close();
@@ -116,9 +114,9 @@ public class DBHelper extends SQLiteOpenHelper {
         + ", Stared = "
         + cursor.getInt(5)
         + ", Time = "
-        + cursor.getInt(6)
+        + cursor.getString(6)
         + ", Position = "
-        + cursor.getInt(7)
+        + cursor.getString(7)
         + "\n";
     }
 
