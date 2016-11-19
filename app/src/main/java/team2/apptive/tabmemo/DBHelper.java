@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     // new table
     db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "title TEXT, memo TEXT, childmemo TEXT, category TEXT, stared INTEGER, date );");
+      "title TEXT, memo TEXT, childmemo TEXT, category TEXT, stared INTEGER, time INTEGER, position INTEGER);");
 
   }
 
@@ -48,38 +48,39 @@ public class DBHelper extends SQLiteOpenHelper {
 
   public void newInsert(String title, String category) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("insert into MEMO values(null, '" + title + "', null, '" + category + "', 0);");
+    long time = System.currentTimeMillis();
+    db.execSQL("insert into MEMO values(null, '" + title + "', null, '" + category + "', 0, " + time + ");");
     db.close();
   }
 
-  public void updateTitle(String title, int id) {
+  public void updateTitle(String title, long time) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("update MEMO set title = '" + title + "' where _id = " + id + ";");
+    db.execSQL("update MEMO set title = '" + title + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updateMemo(String memo, int id) {
+  public void updateMemo(String memo, long time) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("update MEMO set memo = '" + memo + "' where _id = " + id + ";");
+    db.execSQL("update MEMO set memo = '" + memo + "' where time = " + time + ";");
     db.close();
   }
 
-  public void updateStared(boolean isStared, int id) {
+  public void updateStared(boolean isStared, long time) {
     SQLiteDatabase db = getWritableDatabase();
     int stared = (isStared) ? 1 : 0;
-    db.execSQL("update MEMO set stared = " + stared + " where _id = " + id + ";");
+    db.execSQL("update MEMO set stared = " + stared + " where time = " + time + ";");
     db.close();
   }
 
-  public void updateCategory(String category, int id) {
+  public void updateCategory(String category, long time) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("update MEMO set category = '" + category + "' where _id = " + id + ";");
+    db.execSQL("update MEMO set category = '" + category + "' where time = " + time + ";");
     db.close();
   }
 
-  public void deleteById(int id) {
+  public void deleteByTime(long time) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("delete form MEMO where _id = " + id + ";");
+    db.execSQL("delete form MEMO where time = " + time + ";");
     db.close();
   }
 
