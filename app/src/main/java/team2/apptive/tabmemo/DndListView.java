@@ -73,7 +73,7 @@ public class DndListView extends ListView {
           ViewGroup item = (ViewGroup) getChildAt(itemnum - getFirstVisiblePosition());
           mDragPoint = y - item.getTop();
           mCoordOffset = ((int)ev.getRawY()) - y;
-          View dragger = item.findViewById(R.id.row_text);
+          View dragger = item.findViewById(R.id.elv_list);
 
 //                    item.setBackgroundColor(Color.RED);
 

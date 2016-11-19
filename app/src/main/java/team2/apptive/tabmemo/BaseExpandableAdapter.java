@@ -1,11 +1,7 @@
 package team2.apptive.tabmemo;
 
-/**
- * Created by solar on 2016-11-19.
- */
 
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -59,9 +55,8 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
     if(v == null){
       viewHolder = new ViewHolder();
       v = inflater.inflate(R.layout.list_item, parent, false);
-      viewHolder.tv_groupName = (TextView) v.findViewById(R.id.row_text);
-      viewHolder.iv_image = (ImageView) v.findViewById(R.id.rowbar_image1);
-      viewHolder.iv_image = (ImageView) v.findViewById(R.id.rowbar_image2);
+      viewHolder.tv_groupName = (TextView) v.findViewById(R.id.tv_group);
+      viewHolder.iv_image = (ImageView) v.findViewById(R.id.iv_image);
       v.setTag(viewHolder);
     }else{
       viewHolder = (ViewHolder)v.getTag();
@@ -69,9 +64,9 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 
     // 그룹을 펼칠때와 닫을때 아이콘을 변경해 준다.
     if(isExpanded){
-      viewHolder.iv_image.setBackgroundColor(Color.GREEN);
+      viewHolder.iv_image.setImageResource(R.drawable.caret_arrow_up);
     }else{
-      viewHolder.iv_image2.setBackgroundColor(Color.WHITE);
+      viewHolder.iv_image.setImageResource(R.drawable.caret_down);
     }
 
     viewHolder.tv_groupName.setText(getGroup(groupPosition));
@@ -107,9 +102,7 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
     if(v == null){
       viewHolder = new ViewHolder();
       v = inflater.inflate(R.layout.child_list_item, null);
-      viewHolder.tv_child_image = (ImageView) v.findViewById(R.id.child_image);
-      viewHolder.tv_child_image2 = (ImageView) v.findViewById(R.id.child_text);
-      viewHolder.tv_childName = (TextView) v.findViewById(R.id.child_image2);
+      viewHolder.tv_childName = (TextView) v.findViewById(R.id.child_text);
       v.setTag(viewHolder);
     }else{
       viewHolder = (ViewHolder)v.getTag();
@@ -136,6 +129,7 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
   }
 
 }
+
 
 
 

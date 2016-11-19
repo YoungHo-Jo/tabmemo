@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/item_layout"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:gravity="center_vertical"
-              android:background="@drawable/list_item_selector">
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent" >
+
     <LinearLayout
+        android:id="@+id/list_item0"
+        android:background="#c1c1c1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="60dp"
+        android:weightSum="1">
         <ImageView
-            android:id="@+id/rowbar_image1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/list_item_selector"
-            android:layout_weight="0.1"/>
+            android:id="@+id/iv_image"
+            android:background="#FFC1C1C1"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.17"
+            android:src="@drawable/caret_down"
+            android:scaleX="0.35"
+            android:scaleY="0.35"
+            />
 
         <TextView
-            android:id="@+id/row_text"
-            android:text= "티미미"
-            android:textSize="35dp"
-            android:gravity="center"
+            android:id="@+id/tv_group"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text = "#시장"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.9"/>
-        <ImageView
-            android:id="@+id/rowbar_image2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/list_item_selector"
-            android:layout_weight="0.1"/>
-    </LinearLayout>
+            android:gravity="center"
+            android:textSize="30dp"
+            android:layout_weight="0.66"
+            />
 
+        <ImageView
+            android:id="@+id/iv_image2"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:textSize="20dip"
+            android:layout_weight="0.17"
+            />
+    </LinearLayout>
 
 </LinearLayout>
