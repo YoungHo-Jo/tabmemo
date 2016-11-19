@@ -9,32 +9,29 @@
         android:id="@+id/ll_listItem"
         android:background="#c1c1c1"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="wrap_content">
         <Button
             android:id="@+id/bt_expand"
             android:background="#FFC1C1C1"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_weight="0.17"
             android:src="@drawable/caret_down"
-            android:scaleX="0.35"
-            android:scaleY="0.35"
             />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="30dp"
             android:layout_weight="0.66"
             />
 
         <Button
             android:id="@+id/bt_drag"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_weight="0.17"
             />
     </LinearLayout>
@@ -47,7 +44,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/tv_memo"
             android:background="#4145b9"
             android:visibility="visible"/>
@@ -57,7 +54,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_childMemo"
             android:background="#d4ef3b"
-            android:visibility="visible"/>
+            android:visibility="invisible"/>
 
 
     </LinearLayout>

@@ -27,13 +27,19 @@ import android.widget.Toast;
 import com.woxthebox.draglistview.DragItem;
 import com.woxthebox.draglistview.DragListView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 public class ListFragment extends Fragment {
 
   private ArrayList<Pair<Long, String>> mItemArray;
   private DragListView mDragListView;
  // private MySwipeRefreshLayout mRefreshLayout;
+
+  private View view = null;
+  private View itemView = null;
 
   public static ListFragment newInstance() {
     return new ListFragment();
@@ -46,8 +52,9 @@ public class ListFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.list_layout, container, false);
+  public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    view = inflater.inflate(R.layout.list_layout, container, false);
+    itemView = inflater.inflate(R.layout.list_item, container, false);
    // mRefreshLayout = (MySwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
     mDragListView = (DragListView) view.findViewById(R.id.drag_list_view);
     mDragListView.getRecyclerView().setVerticalScrollBarEnabled(true);
@@ -56,6 +63,16 @@ public class ListFragment extends Fragment {
       @Override
       public void onItemDragStarted(int position) {
       //  mRefreshLayout.setEnabled(false);
+        Button btDrag = (Button) itemView.findViewById(R.id.bt_drag);
+        btDrag.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            TextView tvMemo = (TextView) itemView.findViewById(R.id.tv_memo);
+            tvMemo.setVisibility(View.INVISIBLE);
+            setupListRecyclerView();
+          }
+        });
+
 
         Toast.makeText(mDragListView.getContext(), "Start - position: " + position, Toast.LENGTH_SHORT).show();
       }
@@ -64,8 +81,19 @@ public class ListFragment extends Fragment {
       public void onItemDragEnded(int fromPosition, int toPosition) {
        // mRefreshLayout.setEnabled(true);
         if (fromPosition != toPosition) {
+
           Toast.makeText(mDragListView.getContext(), "End - position: " + toPosition, Toast.LENGTH_SHORT).show();
         }
+
+        Button btDrag = (Button) itemView.findViewById(R.id.bt_drag);
+        btDrag.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            TextView tvMemo = (TextView) itemView.findViewById(R.id.tv_memo);
+            tvMemo.setVisibility(View.VISIBLE);
+            setupListRecyclerView();
+          }
+        });
       }
     });
 
@@ -143,7 +171,6 @@ public class ListFragment extends Fragment {
     mDragListView.setCanDragHorizontally(false);
     mDragListView.setCustomDragItem(new MyDragItem(getContext(), R.layout.list_item));
 
-
   }
 
 //  private void setupGridVerticalRecyclerView() {
@@ -171,9 +198,12 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onBindDragView(View clickedView, View dragView) {
-//      CharSequence text = ((TextView) clickedView.findViewById(R.id.text)).getText();
- //     ((TextView) dragView.findViewById(R.id.text)).setText(text);
-      dragView.setBackgroundColor(dragView.getResources().getColor(R.color.list_item_background));
+      // CharSequence text = ((TextView) clickedView.findViewById(R.id.text)).getText();
+     // ((TextView) dragView.findViewById(R.id.text)).setText(text);
+
+      dragView.findViewById(R.id.tv_memo).setVisibility(View.INVISIBLE);
+      dragView.findViewById(R.id.tv_childMemo).setVisibility(View.INVISIBLE);
+      dragView.setBackgroundColor(dragView.getResources().getColor(R.color.colorPrimaryDark));
     }
   }
 }
