@@ -84,7 +84,7 @@ public class DBHelper extends SQLiteOpenHelper {
     db.close();
   }
 
-  public void updateCategory(int position, long time) {
+  public void updatePosition(int position, long time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set position = '" + position + "' where time = " + time + ";");
     db.close();
