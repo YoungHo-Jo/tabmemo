@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     // new table
     db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time INTEGER, position INTEGER);");
+      "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
 
   }
 
@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void newInsert(String title, String category) {
     SQLiteDatabase db = getWritableDatabase();
     long time = System.currentTimeMillis();
-    db.execSQL("insert into MEMO values(null, '" + title + "', null, '" + category + "', 0, " + time + ", " + time + ");");
+    db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time + ", " + time + ");");
     db.close();
   }
 
@@ -84,9 +84,11 @@ public class DBHelper extends SQLiteOpenHelper {
     db.close();
   }
 
-  public void updatePosition(int position, long time) {
+  public void updatePosition(long position, long time) {
     SQLiteDatabase db = getWritableDatabase();
-    db.execSQL("update MEMO set position = '" + position + "' where time = " + time + ";");
+    Long llong = new Long(time);
+    Long pp = new Long(position);
+    db.execSQL("update MEMO set position = " + pp.toString() + " where time = '" + llong.toString() + "';");
     db.close();
   }
 
@@ -94,6 +96,35 @@ public class DBHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("delete form MEMO where time = " + time + ";");
     db.close();
+  }
+
+  public String printData() {
+    SQLiteDatabase db = getReadableDatabase();
+    String str = "";
+
+    Cursor cursor = db.rawQuery("select * from MEMO", null);
+    while(cursor.moveToNext()) {
+      str += cursor.getInt(0)
+        + " : Title "
+        + cursor.getString(1)
+        + ", Memo = "
+        + cursor.getString(2)
+        + ", ChileMemo = "
+        + cursor.getString(3)
+        + ", Category = "
+        + cursor.getString(4)
+        + ", Stared = "
+        + cursor.getInt(5)
+        + ", Time = "
+        + cursor.getInt(6)
+        + ", Position = "
+        + cursor.getInt(7)
+        + "\n";
+    }
+
+    System.out.println(str);
+
+    return str;
   }
 
 }
