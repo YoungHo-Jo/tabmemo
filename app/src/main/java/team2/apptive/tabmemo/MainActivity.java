@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements DndListView.DragL
 
     dbHelper.newInsert("first", "");
 
-    dbHelper.updatePosition(2, 2080264067);
+    dbHelper.updatePosition("2", "1479549710293");
 
     dbHelper.printData();
   }
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements DndListView.DragL
 
     // 임시
     long timeId = 0;
-    dbHelper.updatePosition(to, timeId);
+    // dbHelper.updatePosition(to, timeId);
 
   }
 }
