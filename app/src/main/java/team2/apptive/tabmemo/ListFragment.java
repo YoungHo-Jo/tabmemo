@@ -1,5 +1,7 @@
 package team2.apptive.tabmemo;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Application;
 import android.database.Cursor;
@@ -10,9 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -92,7 +97,21 @@ public class ListFragment extends Fragment {
 				System.out.println("onChildClicked!! " + groupPosition + " " + childPosition + " " + id);
 
 				// 메모 넣을 framelayout 띄우기
-				getActivity().findViewById(R.id.fl_memoInsertion).setVisibility(View.VISIBLE);
+				// 애니메이션을 적용하였으나 부드럽게 뜨지않음
+				// 맨 아랫단에 위치하여 알파를 조정하면서 올라오기 때문에 그런듯보임
+				final FrameLayout flMemoModifying = (FrameLayout) getActivity().findViewById(R.id.fl_memoInsertion);
+				flMemoModifying.animate()
+								.alpha(1.0f)
+								.setDuration(1000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(Animator animation) {
+										super.onAnimationEnd(animation);
+										flMemoModifying.setVisibility(View.VISIBLE);
+									}
+								});
+
+
 				final EditText etMemoInsertion = (EditText) getActivity().findViewById(R.id.et_memoInsertion);
 
 				// childitem 불러오기
@@ -114,7 +133,17 @@ public class ListFragment extends Fragment {
 						childItem.title = dbHelper.updateMemo(modifiedMemo, childId);
 
 						// listview가 보이는 상태로 로 돌아가기
-						getActivity().findViewById(R.id.fl_memoInsertion).setVisibility(View.INVISIBLE);
+						final FrameLayout flMemoModifying = (FrameLayout) getActivity().findViewById(R.id.fl_memoInsertion);
+						flMemoModifying.animate()
+										.alpha(0.0f)
+										.setDuration(300)
+										.setListener(new AnimatorListenerAdapter() {
+											@Override
+											public void onAnimationEnd(Animator animation) {
+												super.onAnimationEnd(animation);
+												getActivity().findViewById(R.id.fl_memoInsertion).setVisibility(View.GONE);
+											}
+										});
 						hideSoftKeyboard(getActivity());
 					}
 				});
@@ -124,10 +153,11 @@ public class ListFragment extends Fragment {
 					@Override
 					public void onClick(View v) {
 						// 저장하지 않고 그냥 돌아가기
-						getActivity().findViewById(R.id.fl_memoInsertion).setVisibility(View.INVISIBLE);
+						getActivity().findViewById(R.id.fl_memoInsertion).setVisibility(View.GONE);
 						hideSoftKeyboard(getActivity());
 					}
 				});
+
 
 				// update child view
 				adapter.getRealChildView(groupPosition, childPosition, false, v, parent);

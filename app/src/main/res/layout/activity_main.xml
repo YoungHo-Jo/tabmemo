@@ -5,7 +5,9 @@
 		android:background="#FFFFFF"
 		android:orientation="vertical">
 
+
 	<FrameLayout
+			android:id="@+id/fl_mainFrameLayout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
@@ -69,7 +71,7 @@
 			android:id="@+id/fl_memoInsertion"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:background="#FFFFFF"
+			android:background="#92000000"
 			android:visibility="invisible">
 
 
@@ -103,7 +105,7 @@
 							android:id="@+id/et_memoInsertion"
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"
-							android:background="@color/list_item_background"
+							android:background="#FFFFFFFF"
 							android:gravity="top"
 							android:inputType="textMultiLine"
 							android:textColor="#000000" />
@@ -140,6 +142,7 @@
 
 
 	</FrameLayout>
+
 
 
 </FrameLayout>
