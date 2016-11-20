@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,4 +28,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
 
+  // 새 매모 버튼 클릭 시 사용될 함수
+  private void onAddNewMemoClick()
+  {
+
+  }
 }
