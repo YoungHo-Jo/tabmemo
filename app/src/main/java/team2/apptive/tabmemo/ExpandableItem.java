@@ -13,11 +13,13 @@ public class ExpandableItem {
     public static class GroupItem {
         String title;
         ArrayList<ChildItem> cItems = new ArrayList<ChildItem>();
+        String id;
     }
 
     public static class ChildItem {
         String title;
         String hint;
+        String id;
     }
 
     public static class ChildHolder {

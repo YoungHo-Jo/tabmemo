@@ -61,13 +61,14 @@ public class DBHelper extends SQLiteOpenHelper {
     db.close();
   }
 
-  public void updateMemo(String memo, String time) {
+  public String updateMemo(String memo, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set memo = '" + memo + "' where time = " + time + ";");
     db.close();
+    return memo;
   }
 
-  public void updateChileMemo(String memo, String time) {
+  public void updateChildMemo(String memo, String time) {
     SQLiteDatabase db = getWritableDatabase();
     db.execSQL("update MEMO set childMemo = '" + memo + "' where time = " + time + ";");
     db.close();

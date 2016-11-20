@@ -5,52 +5,147 @@
               android:orientation="vertical"
               android:background="#FFFFFF">
 
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/white">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/Titlebar_image1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@color/colorPrimary"
-            android:scaleX="0.6"
-            android:scaleY="0.7"
-            android:layout_weight="0.0"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/Titlebar_text"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:text="#앱티브"
-            android:textColor="@android:color/black"
-            android:textSize="38dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_weight="1.0"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:color/white">
 
-        <ImageView
-            android:id="@+id/Titlebar_image2"
-            android:background="@color/colorPrimary"
-            android:scaleX="0.7"
-            android:scaleY="0.7"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_weight="0.0"/>
+                <ImageView
+                    android:id="@+id/Titlebar_image1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@color/colorPrimary"
+                    android:scaleX="0.6"
+                    android:scaleY="0.7"
+                    android:layout_weight="0.0"/>
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/Titlebar_text"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:text="#앱티브"
+                    android:textColor="@android:color/black"
+                    android:textSize="38dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_weight="1.0"/>
+
+                <ImageView
+                    android:id="@+id/Titlebar_image2"
+                    android:background="@color/colorPrimary"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="0.0"/>
+
+            </LinearLayout>
 
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/pos"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@+id/pos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/fl_memoInsertion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:background="@android:color/holo_blue_bright">
 
 
-    </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="9">
+
+                    <EditText
+                        android:id="@+id/et_memoInsertion"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/bt_confirmInsertion"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"/>
+
+                <Button
+                    android:id="@+id/bt_cancelInsertion"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"/>
+
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
 
 </FrameLayout>
 

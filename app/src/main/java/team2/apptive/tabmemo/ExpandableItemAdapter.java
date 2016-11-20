@@ -23,6 +23,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
     private List<ExpandableItem.GroupItem> items;
     private View view;
     private ExpandableItem.ChildHolder holder;
+    private DBHelper dbHelper;
 
     // Constructor
     public ExpandableItemAdapter(Context context) {
@@ -47,6 +48,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
     public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
+
+        System.out.println("getRealChildView GroupPostion: " + groupPosition + " chilPosition " + childPosition);
         if (convertView == null) {
             holder = new ExpandableItem.ChildHolder();
             convertView = inflater.inflate(R.layout.child_list_item, parent, false);
@@ -58,6 +61,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
             holder = (ExpandableItem.ChildHolder) convertView.getTag();
         }
 
+
         holder.title.setText(item.title);
 
         EditText hiddenEditTextView = (EditText) convertView.findViewById(R.id.tv_hiddenTextViewMemo);
@@ -65,20 +69,20 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
         hiddenEditTextView.setText(item.title);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myViewSwitcher(v);
-            }
-        });
-
-        hiddenEditTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus == false)
-                    System.out.println("losed focus");
-            }
-        });
+//        convertView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                myViewSwitcher(v);
+//            }
+//        });
+//
+//        hiddenEditTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if(hasFocus == false)
+//                    System.out.println("losed focus");
+//            }
+//        });
 
 
 
@@ -129,6 +133,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
         }
 
         holder.title.setText(item.title);
+
 
         System.out.println("getGroupView!!");
 
