@@ -11,8 +11,8 @@
         android:background="@android:color/white"
         android:weightSum="1">
 
-        <ImageView
-            android:id="@+id/Titlebar_image1"
+        <Button
+            android:id="@+id/bt_category"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@color/colorPrimary"
@@ -31,8 +31,8 @@
             android:gravity="center"
             android:layout_weight="1.0"/>
 
-        <ImageView
-            android:id="@+id/Titlebar_image2"
+        <Button
+            android:id="@+id/bt_addMemo"
             android:background="@color/colorPrimary"
             android:scaleX="0.7"
             android:scaleY="0.7"
@@ -42,32 +42,11 @@
 
     </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<ExpandableListView2-->
-            <!--android:id="@+id/elv_list"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="fill_parent"-->
-            <!--android:groupIndicator="@null"-->
-            <!--/>-->
-    <!--</LinearLayout>-->
-
     <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/pos"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <!--<team2.apptive.tabmemo.DndListView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:id="@+id/dndList_memoList"-->
-            <!--android:drawSelectorOnTop="false"-->
-            <!--android:cacheColorHint="#00000000">-->
-
-        <!--</team2.apptive.tabmemo.DndListView>-->
-
 
     </LinearLayout>
 </LinearLayout>

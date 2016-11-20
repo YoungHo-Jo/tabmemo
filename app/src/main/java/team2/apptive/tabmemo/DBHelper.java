@@ -21,7 +21,6 @@ public class DBHelper extends SQLiteOpenHelper {
     // new table
     db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
       "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
-
   }
 
   @Override
@@ -46,11 +45,14 @@ public class DBHelper extends SQLiteOpenHelper {
     db.close();
   }
 
-  public void newInsert(String title, String category) {
+  public String newInsert(String title, String category) {
     SQLiteDatabase db = getWritableDatabase();
     Long time = System.currentTimeMillis();
     db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time.toString() + ", " + time.toString() + ");");
+
     db.close();
+
+    return time.toString();
   }
 
   public void updateTitle(String title, String time) {
@@ -124,5 +126,26 @@ public class DBHelper extends SQLiteOpenHelper {
 
     return str;
   }
+
+  public String getMemo(String time) {
+    SQLiteDatabase db = getWritableDatabase();
+    Cursor cursor = db.rawQuery("select * from MEMO where time = '" + time + "'", null);
+    cursor.moveToNext();
+    String s = cursor.getString(2); // memo
+    s = (s != null) ? s : "";
+    db.close();
+    return s;
+  }
+
+  public String getTitle(String time) {
+    SQLiteDatabase db = getWritableDatabase();
+    Cursor cursor = db.rawQuery("select * from MEMO where time = '" + time + "'", null);
+    cursor.moveToNext();
+    String s = cursor.getString(1); // title
+    s = (s != null) ? s : "";
+    db.close();
+    return s;
+  }
+
 
 }
