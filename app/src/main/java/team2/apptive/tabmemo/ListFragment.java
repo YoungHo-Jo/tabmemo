@@ -56,59 +56,8 @@ public class ListFragment extends Fragment {
         dbHelper.newInsert("title 4", "");
         dbHelper.newInsert("title 5", "");
 
-
-
-        // from db, inserting to group item and child item
-        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO", null);
-        while(cursor.moveToNext())
-        {
-            String id = cursor.getString(7); // db: position
-            item = new ExpandableItem.GroupItem(); // new group item
-            citem = new ExpandableItem.ChildItem(); // new child item
-
-            item.id = id; // give item an id
-            item.title = cursor.getString(1); // give item a title
-
-            citem.title = cursor.getString(2); // give child item a memo
-            citem.id = item.id; // give child item a same id
-
-
-            item.cItems.add(citem); // connect with item and citem
-
-            items.add(item); // inserting to array
-        }
-
-
-
-
-//
-//
-//        // Populate our list with groups and it's children
-//        for (int i = 1; i < 100; i++) {
-//            ExpandableItem.GroupItem item = new ExpandableItem.GroupItem();
-//
-//            // DB 로 처리해야할 부분
-//
-//
-//            // 메모 타이틀
-//            item.title = "Group " + i;
-//
-//            // 메모 들어갈 자식 리스트 불러옴
-//            ExpandableItem.ChildItem child = new ExpandableItem.ChildItem();
-//
-//            // 메모가 들어갈 자리
-//            child.title = "자식sdfdddddddddddddddddddddddddddddddddddddddddddddd" +
-//                    "dddddddddddddddddddddddddddddddddddddddddddddd";
-//
-//
-//
-//            item.cItems.add(child);
-//            items.add(item);
-//        }
-
-
-
-
+        // make group items to display
+        makeGroupItemsForViewByCategory("");
 
         adapter = new ExpandableItemAdapter(view.getContext());
         adapter.setData(items);
@@ -179,6 +128,37 @@ public class ListFragment extends Fragment {
     {
         ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.editTextSwitcher);
         switcher.showNext(); //or switcher.showPrevious();
+    }
+
+
+    public void makeGroupItemsForViewByCategory(String category)
+    {
+
+        ExpandableItem.GroupItem item;
+        ExpandableItem.ChildItem citem;
+
+        // from db, inserting to group item and child item
+        // 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
+        // 현재 시간 내림차순으로 정렬해서 출력한다.
+        Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
+        while(cursor.moveToNext())
+        {
+            String id = cursor.getString(7); // db: position
+            item = new ExpandableItem.GroupItem(); // new group item
+            citem = new ExpandableItem.ChildItem(); // new child item
+
+            item.id = id; // give item an id
+            item.title = cursor.getString(1); // give item a title
+
+            citem.title = cursor.getString(2); // give child item a memo
+            citem.id = item.id; // give child item a same id
+
+
+            item.cItems.add(citem); // connect with item and citem
+
+            items.add(item); // inserting to array
+        }
+
     }
 
 
