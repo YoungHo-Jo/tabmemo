@@ -7,8 +7,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+  private final long FINISH_INTERVAL_TIME = 2000;
+  private long backPressedTime = 0;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,5 +36,19 @@ public class MainActivity extends AppCompatActivity {
   private void onAddNewMemoClick()
   {
 
+  }
+
+  // 뒤로가기 두번 두르면 종료
+  @Override
+  public void onBackPressed() {
+    long tempTime = System.currentTimeMillis();
+    long intervalTime = tempTime - backPressedTime;
+
+    if(0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
+      super.onBackPressed();
+    else {
+      backPressedTime = tempTime;
+      Toast.makeText(getApplicationContext(), "종료하려면 한 번더 !", Toast.LENGTH_LONG).show();
+    }
   }
 }
