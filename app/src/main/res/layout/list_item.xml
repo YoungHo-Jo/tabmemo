@@ -1,47 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text_wrap"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingRight="10dp"
+    android:paddingLeft="40dp"
+    android:background="#000000">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:id="@+id/ll_listItem"
-            android:background="#c1c1c1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/bt_expand"
-                android:background="#FFC1C1C1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.17"
-                android:src="@drawable/caret_down" />
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_weight="0.66"
-                />
-
-            <Button
-                android:id="@+id/bt_drag"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.17"
-                />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_memo"
-            android:background="#4145b9"
-            android:visibility="visible"/>
+    <TextView
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>
+

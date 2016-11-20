@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     // new table
     db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
+            "title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
   }
 
   @Override
@@ -105,21 +105,21 @@ public class DBHelper extends SQLiteOpenHelper {
     Cursor cursor = db.rawQuery("select * from MEMO", null);
     while(cursor.moveToNext()) {
       str += cursor.getInt(0)
-        + " : Title "
-        + cursor.getString(1)
-        + ", Memo = "
-        + cursor.getString(2)
-        + ", ChileMemo = "
-        + cursor.getString(3)
-        + ", Category = "
-        + cursor.getString(4)
-        + ", Stared = "
-        + cursor.getInt(5)
-        + ", Time = "
-        + cursor.getString(6)
-        + ", Position = "
-        + cursor.getString(7)
-        + "\n";
+              + " : Title "
+              + cursor.getString(1)
+              + ", Memo = "
+              + cursor.getString(2)
+              + ", ChileMemo = "
+              + cursor.getString(3)
+              + ", Category = "
+              + cursor.getString(4)
+              + ", Stared = "
+              + cursor.getInt(5)
+              + ", Time = "
+              + cursor.getString(6)
+              + ", Position = "
+              + cursor.getString(7)
+              + "\n";
     }
 
     System.out.println(str);
