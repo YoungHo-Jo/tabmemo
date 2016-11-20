@@ -4,11 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,22 +61,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 		holder.title.setText(item.title);
 
-//        convertView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                myViewSwitcher(v);
-//            }
-//        });
-//
-//        hiddenEditTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(hasFocus == false)
-//                    System.out.println("losed focus");
-//            }
-//        });
-
-
 		return convertView;
 	}
 
@@ -134,13 +115,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	public boolean isChildSelectable(int arg0, int arg1) {
 		return true;
 	}
-
-
-//    public void myViewSwitcher(View view)
-//    {
-//        ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.editTextSwitcher);
-//        switcher.showNext(); //or switcher.showPrevious();
-//    }
 
 
 }
