@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
         <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/ll_listItem"
@@ -18,8 +17,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.17"
-                android:src="@drawable/caret_down"
-                />
+                android:src="@drawable/caret_down" />
 
             <TextView
                 android:id="@+id/tv_title"
@@ -39,17 +37,11 @@
 
         </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_memo"
             android:background="#4145b9"
             android:visibility="visible"/>
-    </LinearLayout>
-
 
 </LinearLayout>
