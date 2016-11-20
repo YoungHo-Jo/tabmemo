@@ -40,7 +40,7 @@ public class AnimatedExpandableListView extends ExpandableListView {
 	private static final String TAG = AnimatedExpandableListAdapter.class.getSimpleName();
 
 
-    private static final int ANIMATION_DURATION = 300;
+    private static final int ANIMATION_DURATION = 150;
 
     private AnimatedExpandableListAdapter adapter;
 
@@ -460,4 +460,8 @@ public class AnimatedExpandableListView extends ExpandableListView {
             }
         }
     }
+
+
+
+
 }

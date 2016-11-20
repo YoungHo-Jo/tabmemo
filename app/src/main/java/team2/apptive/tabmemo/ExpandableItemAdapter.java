@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
     private LayoutInflater inflater;
     private List<ExpandableItem.GroupItem> items;
+    private View view;
+    private ExpandableItem.ChildHolder holder;
 
     // Constructor
     public ExpandableItemAdapter(Context context) {
@@ -41,23 +45,55 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
     @Override
     public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        ExpandableItem.ChildHolder holder;
+
         ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
         if (convertView == null) {
             holder = new ExpandableItem.ChildHolder();
-            convertView = inflater.inflate(R.layout.list_item, parent, false);
-            holder.title = (TextView) convertView.findViewById(R.id.textTitle);
-            holder.hint = (TextView) convertView.findViewById(R.id.textHint);
+            convertView = inflater.inflate(R.layout.child_list_item, parent, false);
+            holder.title = (TextView) convertView.findViewById(R.id.tv_clickableTextMemo);
+
             convertView.setTag(holder);
+            view = convertView;
         } else {
             holder = (ExpandableItem.ChildHolder) convertView.getTag();
         }
 
         holder.title.setText(item.title);
-       // holder.hint.setText(item.hint);
+
+        EditText hiddenEditTextView = (EditText) convertView.findViewById(R.id.tv_hiddenTextViewMemo);
+        TextView clickableTextView = (TextView) convertView.findViewById(R.id.tv_clickableTextMemo);
+
+        hiddenEditTextView.setText(item.title);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myViewSwitcher(v);
+            }
+        });
+
+        hiddenEditTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus == false)
+                    System.out.println("losed focus");
+            }
+        });
+
+
 
         return convertView;
     }
+
+
+    public void myViewSwitcher(View view)
+    {
+        ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.editTextSwitcher);
+        switcher.showNext(); //or switcher.showPrevious();
+    }
+
+
+
 
     @Override
     public int getRealChildrenCount(int groupPosition) {
@@ -86,13 +122,15 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
         if (convertView == null) {
             holder = new ExpandableItem.GroupHolder();
             convertView = inflater.inflate(R.layout.list_item, parent, false);
-            holder.title = (TextView) convertView.findViewById(R.id.textTitle);
+            holder.title = (TextView) convertView.findViewById(R.id.tv_title);
             convertView.setTag(holder);
         } else {
             holder = (ExpandableItem.GroupHolder) convertView.getTag();
         }
 
         holder.title.setText(item.title);
+
+        System.out.println("getGroupView!!");
 
         return convertView;
     }
