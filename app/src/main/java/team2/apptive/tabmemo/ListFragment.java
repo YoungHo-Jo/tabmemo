@@ -90,6 +90,10 @@ public class ListFragment extends Fragment {
 				// 확인용
 				System.out.println("onChildClicked!! " + groupPosition + " " + childPosition + " " + id);
 
+				final int tempGroupPosition = groupPosition;
+				final int tempChildPosition = childPosition;
+				final ExpandableListView tempParent = parent;
+
 				// 메모 넣을 framelayout 띄우기
 				// 애니메이션을 적용하였으나 부드럽게 뜨지않음
 				// 맨 아랫단에 위치하여 알파를 조정하면서 올라오기 때문에 그런듯보임
@@ -168,7 +172,7 @@ public class ListFragment extends Fragment {
 
 
 				// update child view
-				adapter.getRealChildView(groupPosition, childPosition, false, v, parent);
+				adapter.getRealChildView(groupPosition, childPosition, true, v, parent);
 
 				return false;
 			}
