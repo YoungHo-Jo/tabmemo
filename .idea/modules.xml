@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Expand/Expand.iml" filepath="$PROJECT_DIR$/Expand/Expand.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/apptive_tabmemo.iml" filepath="$PROJECT_DIR$/apptive_tabmemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/tabmemo.iml" filepath="$PROJECT_DIR$/tabmemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/tabmemo3.iml" filepath="$PROJECT_DIR$/tabmemo3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tabmemo9.iml" filepath="$PROJECT_DIR$/tabmemo9.iml" />
     </modules>
   </component>
 </project>

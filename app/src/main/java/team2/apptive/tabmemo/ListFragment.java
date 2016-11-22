@@ -20,8 +20,7 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 
 /**
- * Created by solar on 2016-11-20.
- */
+ * Created by solar on 2016-11-20.*/
 
 public class ListFragment extends Fragment {
 
