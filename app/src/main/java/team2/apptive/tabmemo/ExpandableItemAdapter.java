@@ -61,6 +61,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 		holder.title.setText(item.title);
 
+
 		return convertView;
 	}
 
@@ -100,7 +101,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 		holder.title.setText(item.title);
 
-
 		System.out.println("getGroupView!!");
 
 		return convertView;
@@ -115,6 +115,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	public boolean isChildSelectable(int arg0, int arg1) {
 		return true;
 	}
+
+
 
 
 }

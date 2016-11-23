@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
@@ -113,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		} else {
 			super.onBackPressed();
 		}
-
 
 		// 종료 옵션
 		if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)

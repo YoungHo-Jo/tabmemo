@@ -2,6 +2,8 @@ package team2.apptive.tabmemo;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -58,7 +60,6 @@ public class ListFragment extends Fragment {
 		listView.setAdapter(adapter);
 
 		// listview divider 조정
-		listView.setDivider(null);
 		listView.setDividerHeight(0);
 
 		// In order to show animations, we need to use a custom click handler
@@ -161,6 +162,7 @@ public class ListFragment extends Fragment {
 		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
+
 
 
 	public void makeGroupItemsForViewByCategory(String category) {

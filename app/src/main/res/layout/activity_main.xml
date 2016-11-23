@@ -47,7 +47,6 @@
 		</LinearLayout>
 
 
-
 		<android.support.design.widget.NavigationView
 				android:id="@+id/nav_view"
 				android:layout_width="wrap_content"
@@ -70,28 +69,20 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:orientation="vertical">
-
-
 			<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="40dp">
-
 			</LinearLayout>
-
-
 			<LinearLayout
 					android:id="@+id/ll_memoInsertion"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
 					android:layout_weight="8"
 					android:orientation="vertical">
-
-
 				<LinearLayout
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_weight="9">
-
 					<EditText
 							android:id="@+id/et_memoInsertion"
 							android:layout_width="match_parent"
@@ -100,38 +91,26 @@
 							android:gravity="top"
 							android:inputType="textMultiLine"
 							android:textColor="#000000" />
-
 				</LinearLayout>
-
-
 			</LinearLayout>
-
-
 			<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="40dp"
 					android:orientation="horizontal">
-
 				<Button
 						android:id="@+id/bt_confirmInsertion"
 						android:layout_width="0dp"
 						android:layout_height="match_parent"
 						android:layout_weight="5"
 						android:background="#0008ff" />
-
 				<Button
 						android:id="@+id/bt_cancelInsertion"
 						android:layout_width="0dp"
 						android:layout_height="match_parent"
 						android:layout_weight="5"
 						android:background="#ff0000" />
-
 			</LinearLayout>
-
-
 		</LinearLayout>
-
-
 	</FrameLayout>
 
 
