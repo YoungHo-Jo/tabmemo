@@ -369,7 +369,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
 				return getRealChildrenCount(groupPosition);
 			}
 		}
-
 	}
 
 	private static class DummyView extends View {
@@ -472,5 +471,13 @@ public class AnimatedExpandableListView extends ExpandableListView {
 		}
 	}
 
+	@Override
+	public void setDivider(Drawable divider) {
+		super.setDivider(divider);
+	}
 
+	@Override
+	public void setDividerHeight(int height) {
+		super.setDividerHeight(height);
+	}
 }

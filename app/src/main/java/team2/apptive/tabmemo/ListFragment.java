@@ -1,7 +1,5 @@
 package team2.apptive.tabmemo;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
@@ -16,8 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-
 import java.util.ArrayList;
+
 
 /**
  * Created by solar on 2016-11-20.*/
@@ -45,9 +43,8 @@ public class ListFragment extends Fragment {
 		// open db
 		dbHelper = new DBHelper(view.getContext(), "Memo.db", null, 1);
 
-		// items
-		ExpandableItem.GroupItem item = null;
-		ExpandableItem.ChildItem citem = null;
+		dbHelper.newInsert("sdfsdf", "");
+		dbHelper.newInsert("dsdfsdfwer", "");
 
 		// make group items to display
 		makeGroupItemsForViewByCategory("");
@@ -59,6 +56,10 @@ public class ListFragment extends Fragment {
 		// listivew에 adapter 연결
 		listView = (AnimatedExpandableListView) view.findViewById(R.id.ll_expandable);
 		listView.setAdapter(adapter);
+
+		// listview divider 조정
+		listView.setDivider(null);
+		listView.setDividerHeight(0);
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
@@ -89,24 +90,10 @@ public class ListFragment extends Fragment {
 				// 확인용
 				System.out.println("onChildClicked!! " + groupPosition + " " + childPosition + " " + id);
 
-				final int tempGroupPosition = groupPosition;
-				final int tempChildPosition = childPosition;
-				final ExpandableListView tempParent = parent;
-
 				// 메모 넣을 framelayout 띄우기
 				// 애니메이션을 적용하였으나 부드럽게 뜨지않음
 				// 맨 아랫단에 위치하여 알파를 조정하면서 올라오기 때문에 그런듯보임
 				final FrameLayout flMemoModifying = (FrameLayout) getActivity().findViewById(R.id.fl_memoInsertion);
-//				flMemoModifying.animate()
-//								.alpha(1.0f)
-//								.setDuration(1000)
-//								.setListener(new AnimatorListenerAdapter() {
-//									@Override
-//									public void onAnimationEnd(Animator animation) {
-//										super.onAnimationEnd(animation);
-//										flMemoModifying.setVisibility(View.VISIBLE);
-//									}
-//								});
 
 				// 애니메이션 새로운 적용
 				Animation fadeInAnimation = new AlphaAnimation(0, 1);
@@ -135,18 +122,7 @@ public class ListFragment extends Fragment {
 						childItem.title = dbHelper.updateMemo(modifiedMemo, childId);
 
 						// listview가 보이는 상태로 로 돌아가기
-//						flMemoModifying.animate()
-//										.alpha(0.0f)
-//										.setDuration(300)
-//										.setListener(new AnimatorListenerAdapter() {
-//											@Override
-//											public void onAnimationEnd(Animator animation) {
-//												super.onAnimationEnd(animation);
-//												flMemoModifying.setVisibility(View.GONE);
-//											}
-//										});
-
-						// 새로운 애니메이션
+						// 애니메이션
 						Animation fadeOutAnimation = new AlphaAnimation(1, 0);
 						fadeOutAnimation.setDuration(500);
 						flMemoModifying.setVisibility(View.INVISIBLE);
