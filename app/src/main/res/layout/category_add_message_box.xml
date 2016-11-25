@@ -5,9 +5,16 @@
               android:layout_height="fill_parent"
               android:orientation="vertical"
               android:padding="10dp" >
+
+    <Button
+        android:id="@+id/black_color"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@android:color/black"/>
     <EditText
         android:id="@+id/category_add_messagebox_edit"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:hint="ex) 장보기, 과제"
         android:layout_marginRight="10dp" />
 </LinearLayout>
