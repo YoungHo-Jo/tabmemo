@@ -21,6 +21,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private View view;
 	private ExpandableItem.ChildHolder holder;
 	private DBHelper dbHelper;
+	private boolean isEditting = false;
 
 	// Constructor
 	public ExpandableItemAdapter(Context context) {
@@ -44,14 +45,13 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	@Override
 	public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-		ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
+		final ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
 
 		System.out.println("getRealChildView GroupPostion: " + groupPosition + " chilPosition " + childPosition);
 		if (convertView == null) {
 			holder = new ExpandableItem.ChildHolder();
 			convertView = inflater.inflate(R.layout.child_list_item, parent, false);
-			holder.title = (TextView) convertView.findViewById(R.id.tv_clickableTextMemo);
-
+			holder.memo = (EditableTextView) convertView.findViewById(R.id.tv_clickableTextMemo);
 			convertView.setTag(holder);
 			view = convertView;
 		} else {
@@ -59,7 +59,27 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 
 
-		holder.title.setText(item.title);
+		holder.memo.setText(item.memo);
+		holder.memo.setOnEditModeChangedListener(new EditableTextView.OnEditModeChangedListener() {
+			@Override
+			public void onEditModeChanged(EditableTextView view, boolean isEditMode) {
+				if(isEditMode)
+				{
+					System.out.println("EditMode is true --> Editting!!");
+					isEditting = true;
+				}
+				else
+				{
+					isEditting = false;
+					System.out.println("EditMode is false --> Save memo!!");
+					dbHelper = new DBHelper(view.getContext(), "Memo.db", null, 1);
+					item.memo = view.getText().toString();
+					dbHelper.updateMemo(view.getText().toString(), item.id);
+
+				}
+			}
+		});
+
 
 
 		return convertView;
@@ -101,7 +121,9 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 		holder.title.setText(item.title);
 
-		System.out.println("getGroupView!!");
+		// System.out.println("getGroupView!!");
+
+
 
 		return convertView;
 	}
@@ -116,7 +138,5 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		return true;
 	}
 
-
-
-
+	public boolean isEditting() {return isEditting;}
 }

@@ -1,5 +1,6 @@
 package team2.apptive.tabmemo;
 
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,14 +18,12 @@ public class ExpandableItem {
 	}
 
 	public static class ChildItem {
-		String title;
-		String hint;
+		String memo;
 		String id;
 	}
 
 	public static class ChildHolder {
-		TextView title;
-		TextView hint;
+		EditableTextView memo;
 	}
 
 	public static class GroupHolder {
