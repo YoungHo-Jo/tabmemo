@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,11 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 	private final long FINISH_INTERVAL_TIME = 2000;
 	private long backPressedTime = 0;
+	private Fragment listFragment = null;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,10 +26,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		setTitle("      티 미 미");
+		setTitle("티미미");
+
 
 		// listview fragment
-		showFragment(ListFragment.newInstance());
+		listFragment = showFragment(ListFragment.newInstance());
 
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -41,16 +43,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+
 	}
 
-	private void showFragment(Fragment fragment) {
+	private Fragment showFragment(Fragment fragment) {
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.pos, fragment, "fragment").commit();
+		transaction.replace(R.id.pos, fragment, "listFragment").commit();
+		return fragment;
 	}
-
 
 	// 새 매모 버튼 클릭 시 사용될 함수
-	private void onAddNewMemoClick() {
+	private void onAddNewMemoClick()
+	{
+		// (수정필요) 새 메모 타이틀은 여기서
+		((ListFragment)listFragment).addNewTitleMemo("new title5", "");
+		// new listFragment --> memory ???
+		showFragment(ListFragment.newInstance());
 
 	}
 
@@ -67,12 +76,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
+			onAddNewMemoClick();
 			return true;
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -95,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		} else if (id == R.id.nav_send) {
 
 		}
-
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
 		return true;
@@ -111,16 +118,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// drawer 떠있는 상태에서 뒤로가기 버튼 누를때
 		if (drawer.isDrawerOpen(GravityCompat.START)) {
 			drawer.closeDrawer(GravityCompat.START);
-		} else {
-			super.onBackPressed();
 		}
 
-		// 종료 옵션
-		if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
-			super.onBackPressed();
 		else {
-			backPressedTime = tempTime;
-			Toast.makeText(getApplicationContext(), "종료하려면 한 번더 !", Toast.LENGTH_LONG).show();
+			// 종료 옵션
+			if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
+				super.onBackPressed();
+			else {
+				backPressedTime = tempTime;
+				Toast.makeText(getApplicationContext(), "종료하려면 한 번더 !", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
+
+
 }

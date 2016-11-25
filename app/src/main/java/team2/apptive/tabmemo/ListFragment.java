@@ -2,11 +2,10 @@ package team2.apptive.tabmemo;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +23,12 @@ import java.util.ArrayList;
 
 public class ListFragment extends Fragment {
 
-	private ArrayList<ExpandableItem.GroupItem> items;
+	private ArrayList<ExpandableItem.GroupItem> items = new ArrayList<ExpandableItem.GroupItem>();
 	private AnimatedExpandableListView listView;
 	private ExpandableItemAdapter adapter;
 	private View view;
-	private DBHelper dbHelper;
+	private DBHelper dbHelper = null;
+	private String category = "";
 
 	public static ListFragment newInstance() {
 		return new ListFragment();
@@ -38,18 +38,14 @@ public class ListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		System.out.println("ListView onCreateView Called!");
 		view = inflater.inflate(R.layout.list_layout, container, false);
 
-		items = new ArrayList<ExpandableItem.GroupItem>();
-
-		// open db
+		// Open Db
 		dbHelper = new DBHelper(view.getContext(), "Memo.db", null, 1);
 
-		dbHelper.newInsert("sdfsdf", "");
-		dbHelper.newInsert("dsdfsdfwer", "");
-
 		// make group items to display
-		makeGroupItemsForViewByCategory("");
+		makeGroupItemsForViewByCategory(category);
 
 		// listview 에 보이게할 내용을 adapter 에 연결
 		adapter = new ExpandableItemAdapter(view.getContext());
@@ -150,6 +146,7 @@ public class ListFragment extends Fragment {
 				// update child view
 				adapter.getRealChildView(groupPosition, childPosition, true, v, parent);
 
+
 				return false;
 			}
 		});
@@ -162,7 +159,6 @@ public class ListFragment extends Fragment {
 		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
-
 
 
 	public void makeGroupItemsForViewByCategory(String category) {
@@ -193,5 +189,23 @@ public class ListFragment extends Fragment {
 
 	}
 
+	public void setCategoryForListView(String _category) {
+		category = _category;
+	}
+
+	public void addNewTitleMemo(String title, String category)
+	{
+		dbHelper.newInsert(title, category);
+		refreshFragment();
+	}
+
+	public void refreshFragment()
+	{
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		listView.deferNotifyDataSetChanged();
+		ft.detach(this).attach(this).commit();
+	}
+
+	public ExpandableItemAdapter getAdapter() {return adapter;}
 
 }

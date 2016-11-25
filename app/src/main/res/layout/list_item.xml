@@ -12,7 +12,7 @@
 			android:gravity="center_vertical"
 			android:paddingLeft="40dp"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:background="#bce0ec"
+			android:background="@drawable/memo_title"
 			android:textSize="20dp"/>
 
 </LinearLayout>
