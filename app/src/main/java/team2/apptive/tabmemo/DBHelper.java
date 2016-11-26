@@ -48,7 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public String newInsert(String title, String category) {
 		SQLiteDatabase db = getWritableDatabase();
 		Long time = System.currentTimeMillis();
-		db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time.toString() + ", " + time.toString() + ");");
+		db.execSQL("insert into MEMO values(null, '" + title + "', \"\", null, '" + category + "', 0, " + time.toString() + ", " + time.toString() + ");");
 
 		db.close();
 		return time.toString();
@@ -65,6 +65,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("update MEMO set memo = '" + memo + "' where time = " + time + ";");
 		db.close();
 		return memo;
+	}
+
+	public void updatMemoToNull(String time)
+	{
+		SQLiteDatabase db = getWritableDatabase();
+		db.execSQL("update MEMO set memo = null, where time = " + time + ";");
+		db.close();
 	}
 
 	public void updateChildMemo(String memo, String time) {
@@ -94,7 +101,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public void deleteByTime(String time) {
 		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("delete form MEMO where time = " + time + ";");
+		db.execSQL("delete from MEMO where time = " + time + ";");
 		db.close();
 	}
 
@@ -147,8 +154,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		return s;
 	}
 
-	public String getCategory(String time)
-	{
+	public String getCategory(String time) {
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cursor = db.rawQuery("select * from MEMO where time = '" + time + "'", null);
 		cursor.moveToNext();

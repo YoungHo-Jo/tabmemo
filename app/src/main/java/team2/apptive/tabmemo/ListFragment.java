@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -30,10 +33,12 @@ public class ListFragment extends Fragment {
 	private DBHelper dbHelper = null;
 	private String category = "";
 	private boolean isLongClicked;
+	private boolean isAddedNewMemo;
 
 	public static ListFragment newInstance() {
 		return new ListFragment();
 	}
+
 
 	@Nullable
 	@Override
@@ -56,20 +61,20 @@ public class ListFragment extends Fragment {
 		listView = (AnimatedExpandableListView) view.findViewById(R.id.ll_expandable);
 		listView.setAdapter(adapter);
 
-		// listview divider 조정
-		listView.setDividerHeight(0);
-
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
 		listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
 				isLongClicked = false;
 				listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
 					public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-						System.out.println("group item is long clicked!");
+
+						TextView titleView = (TextView) view.findViewById(R.id.tv_title);
+						System.out.println("group item is long clicked! " + titleView.getText());
+						titleView.setText("haha");
+
 
 						// 타이틀 수정 기능 필요
 
@@ -89,82 +94,17 @@ public class ListFragment extends Fragment {
 					}
 				}
 
-
-				System.out.println("onGroupClick!! " + groupPosition + " " + id);
+				listView.requestFocus();
+				System.out.println("onGroupClick!! " + groupPosition + " " + id + " focused?: " + listView.isFocused());
 				return true;
 			}
 		});
 
-
-//		// 자식 클릭
-//		listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//			@Override
-//			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//				// 확인용
-//				System.out.println("onChildClicked!! " + groupPosition + " " + childPosition + " " + id);
-//
-//				// 메모 넣을 framelayout 띄우기
-//				// 애니메이션을 적용하였으나 부드럽게 뜨지않음
-//				// 맨 아랫단에 위치하여 알파를 조정하면서 올라오기 때문에 그런듯보임
-//				final FrameLayout flMemoModifying = (FrameLayout) getActivity().findViewById(R.id.fl_memoInsertion);
-//
-//				// 애니메이션 새로운 적용
-//				Animation fadeInAnimation = new AlphaAnimation(0, 1);
-//				fadeInAnimation.setDuration(500);
-//				flMemoModifying.setVisibility(View.VISIBLE);
-//				flMemoModifying.setAnimation(fadeInAnimation);
-//
-//				final EditText etMemoInsertion = (EditText) getActivity().findViewById(R.id.et_memoInsertion);
-//
-//				// childitem 불러오기
-//				final ExpandableItem.ChildItem childItem = adapter.getChild(groupPosition, childPosition);
-//				final String childId = childItem.id;
-//
-//				// 메모 넣을 frameLayout 에 기존의 메모 넣기
-//				etMemoInsertion.setText(childItem.memo);
-//
-//
-//				// 확인버튼 클릭시
-//				getActivity().findViewById(R.id.bt_confirmInsertion).setOnClickListener(new View.OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						// 수정된 메모 내용 가져오기
-//						String modifiedMemo = etMemoInsertion.getText().toString();
-//
-//						// adapter 의 getChildView 를 통해서 업데이트 되게 하기 return: string
-//						childItem.memo = dbHelper.updateMemo(modifiedMemo, childId);
-//
-//						// listview가 보이는 상태로 로 돌아가기
-//						// 애니메이션
-//						Animation fadeOutAnimation = new AlphaAnimation(1, 0);
-//						fadeOutAnimation.setDuration(500);
-//						flMemoModifying.setVisibility(View.INVISIBLE);
-//						flMemoModifying.setAnimation(fadeOutAnimation);
-//						hideSoftKeyboard(getActivity());
-//					}
-//				});
-//
-//				// 취소버튼 클릭시
-//				getActivity().findViewById(R.id.bt_cancelInsertion).setOnClickListener(new View.OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						// 저장하지 않고 그냥 돌아가기
-//
-//						Animation fadeOutAnimation = new AlphaAnimation(1, 0);
-//						fadeOutAnimation.setDuration(500);
-//						flMemoModifying.setVisibility(View.INVISIBLE);
-//						flMemoModifying.setAnimation(fadeOutAnimation);
-//						hideSoftKeyboard(getActivity());
-//					}
-//				});
-//				// update child view
-//				adapter.getRealChildView(groupPosition, childPosition, true, v, parent);
-//
-//
-//				return false;
-//			}
-//		});
-
+		// new memo will be expanded and have a cursor on it
+		if(isAddedNewMemo) {
+			listView.expandGroupWithAnimation(0);
+			adapter.setIsNewMemo(true);
+		}
 
 		return view;
 	}
@@ -183,16 +123,18 @@ public class ListFragment extends Fragment {
 			item = new ExpandableItem.GroupItem(); // new group item
 			citem = new ExpandableItem.ChildItem(); // new child item
 
-			item.id = id; // give item an id
-			item.title = cursor.getString(1); // give item a memo
+			if(cursor.getString(2) != null) {
+				item.id = id; // give item an id
+				item.title = cursor.getString(1); // give item a memo
 
-			citem.memo = cursor.getString(2); // give child item a memo
-			citem.id = item.id; // give child item a same id
+				citem.memo = cursor.getString(2); // give child item a memo
+				citem.id = item.id; // give child item a same id
 
 
-			item.cItems.add(citem); // connect with item and citem
+				item.cItems.add(citem); // connect with item and citem
 
-			items.add(item); // inserting to array
+				items.add(item); // inserting to array
+			}
 		}
 
 	}
@@ -202,8 +144,8 @@ public class ListFragment extends Fragment {
 	}
 
 	public void addNewTitleMemo(String title, String category) {
-		String id = dbHelper.newInsert(title, category);
-
+		dbHelper.newInsert(title, category);
+		isAddedNewMemo = true;
 	}
 
 	public void refreshFragment() {
@@ -216,5 +158,8 @@ public class ListFragment extends Fragment {
 		return adapter;
 	}
 
-
+	public ListFragment setIsAddedNewMemo(boolean _isAddedNewMemo) {
+		isAddedNewMemo = _isAddedNewMemo;
+		return this;
+	}
 }

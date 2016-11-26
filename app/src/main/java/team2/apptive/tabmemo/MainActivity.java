@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				alert.show();
 			}
 		});
+
+
 	}
 
 
@@ -132,10 +134,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	// 새 매모 버튼 클릭 시 사용될 함수
 	private void onAddNewMemoClick() {
 		// (수정필요) 새 메모 타이틀은 여기서
-		((ListFragment) listFragment).addNewTitleMemo("new title6", "");
+		// ((ListFragment) listFragment).addNewTitleMemo("No Title", "");
 		// new listFragment --> memory ???
-		showFragment(ListFragment.newInstance());
 
+
+		dbHelper.newInsert("no title", "");
+
+		listFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true));
 	}
 //
 //	@Override
@@ -214,6 +219,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 			items.add(category); // new items for category
 		}
+	}
 
+	public void readCategoriesFromDB()
+	{
+
+	}
+
+	public ListFragment getCurrentListFragment()
+	{
+		return (ListFragment) listFragment;
 	}
 }

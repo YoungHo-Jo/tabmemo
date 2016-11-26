@@ -32,18 +32,13 @@ public class EditableTextView extends EditText {
 						R.styleable.EditableTextView, 0,
 						R.style.editabletextview_default_style);
 		try {
-			editMode = a.getBoolean(R.styleable.EditableTextView_editMode,
-							false);
-			showBackgroundOnViewMode = a
-							.getBoolean(
+			editMode = a.getBoolean(R.styleable.EditableTextView_editMode, false);
+			showBackgroundOnViewMode = a.getBoolean(
 											R.styleable.EditableTextView_showBackgroundOnViewMode,
 											true);
-			showButton = a.getBoolean(R.styleable.EditableTextView_showButton,
-							true);
-			editDrawable = a
-							.getDrawable(R.styleable.EditableTextView_buttonEditDrawable);
-			saveDrawable = a
-							.getDrawable(R.styleable.EditableTextView_buttonSaveDrawable);
+			showButton = a.getBoolean(R.styleable.EditableTextView_showButton, true);
+			editDrawable = a.getDrawable(R.styleable.EditableTextView_buttonEditDrawable);
+			saveDrawable = a.getDrawable(R.styleable.EditableTextView_buttonSaveDrawable);
 		} finally {
 			a.recycle();
 		}
@@ -70,7 +65,7 @@ public class EditableTextView extends EditText {
 		this.onEditModeChangedListener = onEditModeChangedListener;
 	}
 
-	private void refreshState() {
+	public void refreshState() {
 		setKeyListener(editMode ? keyListener : null);
 		if (!showBackgroundOnViewMode) {
 			setBackgroundDrawable(editMode ? backgroundDrawable : null);

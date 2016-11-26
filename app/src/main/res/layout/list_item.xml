@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="#000000"
+		android:background="#f4f5f4"
 		android:orientation="horizontal">
 
 	<TextView
@@ -10,10 +10,12 @@
 			android:layout_width="match_parent"
 			android:layout_height="60dp"
 			android:gravity="center_vertical"
-			android:paddingLeft="40dp"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:background="@drawable/memo_title"
-			android:textSize="20dp"/>
+			android:background="#FFFFFF"
+			android:textSize="20dp"
+			android:textAlignment="center"
+			android:textColor="#000000"
+			android:text="-"/>
 
 </LinearLayout>
 
