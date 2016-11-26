@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// new table
 		db.execSQL("CREATE TABLE MEMO(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-						"memo TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
+						"title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
 	}
 
 	@Override
@@ -51,13 +51,12 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("insert into MEMO values(null, '" + title + "', null, null, '" + category + "', 0, " + time.toString() + ", " + time.toString() + ");");
 
 		db.close();
-
 		return time.toString();
 	}
 
 	public void updateTitle(String title, String time) {
 		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update MEMO set memo = '" + title + "' where time = " + time + ";");
+		db.execSQL("update MEMO set title = '" + title + "' where time = " + time + ";");
 		db.close();
 	}
 
@@ -142,7 +141,18 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		Cursor cursor = db.rawQuery("select * from MEMO where time = '" + time + "'", null);
 		cursor.moveToNext();
-		String s = cursor.getString(1); // memo
+		String s = cursor.getString(1); // title
+		s = (s != null) ? s : "";
+		db.close();
+		return s;
+	}
+
+	public String getCategory(String time)
+	{
+		SQLiteDatabase db = getWritableDatabase();
+		Cursor cursor = db.rawQuery("select * from MEMO where time = '" + time + "'", null);
+		cursor.moveToNext();
+		String s = cursor.getString(4); // category
 		s = (s != null) ? s : "";
 		db.close();
 		return s;

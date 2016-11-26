@@ -1,6 +1,7 @@
 package team2.apptive.tabmemo;
 
-import android.app.Activity;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,14 +10,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private final long FINISH_INTERVAL_TIME = 2000;
 	private long backPressedTime = 0;
 	private Fragment listFragment = null;
+	private DBHelper dbHelper = null;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// listview fragment
 		listFragment = showFragment(ListFragment.newInstance());
+
+		// Open DB
+		dbHelper = new DBHelper(getApplicationContext(), "Memo.db", null, 1);
 
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,40 +66,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				onAddNewMemoClick();
 			}
 		});
-	}
 
-//	private AlertDialog create_inputDialog() { //카테고리 눌렀을 시 메시지 박스 V액션
-//		final ArrayList<String> items = new ArrayList<String>() ;
-//		final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
-//		ListView listview = (ListView) findViewById(R.id.navigation_list) ;
-//		listview.setAdapter(adapter) ;
-//		AlertDialog dialogBox = new AlertDialog.Builder(this)
-//			.setTitle("카테고리를 추가해주세요")
-//			.setNeutralButton("      추가", new DialogInterface.OnClickListener() {
-//				// 예 버튼 눌렀을때 액션 구현
-//				public void onClick(DialogInterface dialog, int which) {
-//					int count=0;
-//					EditText editText = (EditText)findViewById(R.id.category_add_messagebox_edit);
-//					count = adapter.getCount();
-//					if ( editText.getText().toString() == null ) {
-//						Toast.makeText(getApplicationContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
-//					}
-//					//공백이 아닐 때 처리할 내용
-//					if( editText.getText().toString()!= null) {
-//						items.add("#" + editText.getText().toString());
-//						adapter.notifyDataSetChanged();
-//						count++;
-//
-//					}
-//				}
-//			})
-//			.setPositiveButton("취소      ", new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int which) {
-//					// 아니오 버튼 눌렀을때 액션 구현
-//				}
-//			}).create();
-//		return dialogBox;
-//	}
+		// Button (add new category)
+		final Button addButton = (Button) findViewById(R.id.navigation_button);
+
+		// category items
+		final ArrayList<String> items = new ArrayList<>();
+
+		// from db
+		makeItemsForCategoryList(items);
+
+		// setting category listview
+		final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
+		final ListView categoryListView = (ListView) findViewById(R.id.navigation_list);
+		categoryListView.setAdapter(adapter);
+
+		addButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+				final AlertDialog.Builder alert = new AlertDialog.Builder(addButton.getContext());
+				final EditText input = new EditText(addButton.getContext());
+				final Button black = (Button) findViewById(R.id.black_color);
+
+				alert.setTitle("카테고리를 입력하세요");
+				alert.setView(black);
+				alert.setView(input);
+
+				alert.setPositiveButton("만들기", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						String value = input.getText().toString();
+						if (value.equals("")) {
+							Toast.makeText(alert.getContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
+						}
+						//공백이 아닐 때 처리할 내용
+						else {
+							items.add("# " + input.getText().toString());
+
+							// insert to db
+							dbHelper.newInsert("제목없음", "# " + input.getText().toString());
+							adapter.notifyDataSetChanged();
+							dialog.dismiss();
+							alert.create();
+						}
+					}
+				});
+				alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						//Cancel
+						dialog.dismiss();
+						alert.create();
+					}
+				});
+				alert.show();
+			}
+		});
+	}
 
 
 	private Fragment showFragment(Fragment fragment) {
@@ -161,16 +190,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		}
 
-}
+	}
+//
+//	public static void hideSoftKeyboard(Activity activity) {
+//		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+//		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+//	}
 
-	public static void hideSoftKeyboard(Activity activity) {
-		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+
+	public static void showSoftKeyboard() {
+
 	}
 
+	public void makeItemsForCategoryList(ArrayList<String> items) {
 
-	public static void showSoftKeyboard()
-	{
+		// from db, inserting to group item and child item
+		// 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
+		// 현재 시간 내림차순으로 정렬해서 출력한다.
+		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category != \"\" order by time desc", null);
+		while (cursor.moveToNext()) {
+			String category = cursor.getString(4); // db: category
+
+			items.add(category); // new items for category
+		}
 
 	}
 }
