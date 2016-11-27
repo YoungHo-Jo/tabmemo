@@ -110,11 +110,12 @@
 				</ListView>
 
 				<Button
+						android:onClick="onClickView"
 						android:id="@+id/navigation_button"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_weight="1"
-						android:background="#F2F2F2"/>
+						android:background="#D3E3"/>
 			</LinearLayout>
 		</android.support.design.widget.NavigationView>
 	</android.support.v4.widget.DrawerLayout>

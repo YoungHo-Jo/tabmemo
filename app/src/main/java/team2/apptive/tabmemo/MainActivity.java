@@ -33,10 +33,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private long backPressedTime = 0;
 	private Fragment listFragment = null;
 	private DBHelper dbHelper = null;
-	private EditText input;
-	private ListView categoryListView;
+	private EditText input = (EditText)findViewById(R.id.Messagebox_edit);
+	private ListView categoryListView = null;
 	private Button addButton;
 	ArrayList<String> items = new ArrayList<>();
+	ArrayList<String> color_buttons = new ArrayList<>();
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -155,8 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private View.OnClickListener leftClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			String value = input.getText().toString();
-			input = new EditText(addButton.getContext());
+			String value =  input.getText().toString();
 			final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
 			while (true) {
 				if (value == "") {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				}
 				//공백이 아닐 때 처리할 내용
 				if (value != null) {
-					items.add("#" + input.getText().toString());
+					items.add(" # " + value);
 					adapter.notifyDataSetChanged();
 				}
 			}

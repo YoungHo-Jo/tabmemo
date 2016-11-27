@@ -32,11 +32,7 @@ public class CustomDialog extends Dialog{
     super(context , android.R.style.Theme_Translucent_NoTitleBar);
   }
 
-//  public CustomDialog(Context context , String title ,
-//                      View.OnClickListener singleListener) {
-//    super(context , android.R.style.Theme_Translucent_NoTitleBar);
-//    this.mLeftClickListener = singleListener;
-//  }
+//b
 
   public CustomDialog(Context context ,
                       View.OnClickListener leftListener , View.OnClickListener rightListener) {
