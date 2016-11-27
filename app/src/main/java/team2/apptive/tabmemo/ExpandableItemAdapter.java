@@ -1,10 +1,9 @@
 package team2.apptive.tabmemo;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -22,15 +21,15 @@ import java.util.List;
 public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
 	private LayoutInflater inflater;
 	private List<ExpandableItem.GroupItem> items;
-	private View view;
 	private ExpandableItem.ChildHolder holder;
 	private DBHelper dbHelper;
-	private boolean isEditting = false;
 	private boolean isNewMemo = false;
+	private Context mContext;
 
 	// Constructor
 	public ExpandableItemAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
+		mContext = context;
 	}
 
 	public void setData(List<ExpandableItem.GroupItem> items) {
@@ -58,7 +57,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			convertView = inflater.inflate(R.layout.child_list_item, parent, false);
 			holder.memo = (EditableTextView) convertView.findViewById(R.id.tv_clickableTextMemo);
 			convertView.setTag(holder);
-			view = convertView;
 		} else {
 			holder = (ExpandableItem.ChildHolder) convertView.getTag();
 		}
@@ -120,7 +118,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 //				});
 			}
 		});
-
+		final ExpandableItemAdapter eia = this;
 		holder.memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -131,14 +129,15 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				if (hasFocus) {
 
 				} else {
-					// Store Memo
+					// Store Memoqqqq
 					((EditableTextView) v).setEditMode(false);
 					isNewMemo = false;
 					System.out.println("EditMode is false --> Save memo!!");
 					item.memo = focusedEditView.getText().toString();
 					if (item.memo.equals("")) { // empty memo
 						System.out.println("Empty memo --> Delete memo!!");
-						dbHelper.deleteByTime(item.id);
+						dbHelper.updatMemoToNull(item.id);
+						eia.notifyDataSetChanged();
 					} else // non-empty memo
 						dbHelper.updateMemo(focusedEditView.getText().toString(), item.id);
 					// Remove Keyboard
@@ -146,6 +145,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				}
 			}
 		});
+
 
 		// (개선필요) 한 곳에서 쭉 적다가, 리스트뷰를 내리거나 올려서 수정하던 메모가 destroy 되면 저장이 되지 않는 문제 발생
 		// textwatcher를 통해서 실시간으로 저장을 하였으나, 다른 focused 메모 혹은 자식 메모간 혼란으로 인해 다른 메모에 같은 내용이 저장되는 등 버그가 다수 발견
@@ -157,7 +157,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			holder.memo.setEditMode(true);
 			holder.memo.requestFocus();
 		}
-
 
 		return convertView;
 	}
@@ -222,4 +221,19 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		isNewMemo = _isNewMemo;
 	}
 
+	public boolean isNewMemo() {return isNewMemo;}
+
+	@Override
+	public void notifyDataSetChanged() {
+		System.out.println("notifydataSetChagned!!");
+		for (int i = 0; i < items.size(); i++) {
+			if(isNewMemo)
+				continue;
+			if (items.get(i).cItems.get(0).memo.equals("")) {
+				items.remove(i);
+				System.out.println("Empty Memo --> Delete From dataSet");
+			}
+		}
+		super.notifyDataSetChanged();
+	}
 }

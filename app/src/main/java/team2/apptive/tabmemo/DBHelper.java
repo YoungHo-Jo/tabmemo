@@ -70,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void updatMemoToNull(String time)
 	{
 		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update MEMO set memo = null, where time = " + time + ";");
+		db.execSQL("update MEMO set memo = null where time = " + time + ";");
 		db.close();
 	}
 

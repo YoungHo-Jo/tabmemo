@@ -39,7 +39,6 @@ public class ListFragment extends Fragment {
 		return new ListFragment();
 	}
 
-
 	@Nullable
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,10 +82,14 @@ public class ListFragment extends Fragment {
 					}
 				});
 
+				// 빈 메모 삭제후 맨 위에 펼쳐있는 경우 제거
+				if(!isAddedNewMemo)
+					listView.collapseGroupWithAnimation(0);
+
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
-				if (!isLongClicked) { // is not long clicked
+				 if (!isLongClicked && !adapter.isNewMemo()) { // is not long clicked
 					if (listView.isGroupExpanded(groupPosition)) {
 						listView.collapseGroupWithAnimation(groupPosition);
 					} else {
@@ -104,10 +107,13 @@ public class ListFragment extends Fragment {
 		if(isAddedNewMemo) {
 			listView.expandGroupWithAnimation(0);
 			adapter.setIsNewMemo(true);
+			isAddedNewMemo = false;
 		}
+
 
 		return view;
 	}
+
 
 	public void makeGroupItemsForViewByCategory(String category) {
 		ExpandableItem.GroupItem item;
@@ -123,6 +129,9 @@ public class ListFragment extends Fragment {
 			item = new ExpandableItem.GroupItem(); // new group item
 			citem = new ExpandableItem.ChildItem(); // new child item
 
+			if(cursor.getString(2) != null && cursor.getString(2).equals(""))
+				dbHelper.updatMemoToNull(id);
+
 			if(cursor.getString(2) != null) {
 				item.id = id; // give item an id
 				item.title = cursor.getString(1); // give item a memo
@@ -135,6 +144,8 @@ public class ListFragment extends Fragment {
 
 				items.add(item); // inserting to array
 			}
+
+
 		}
 
 	}
@@ -162,4 +173,6 @@ public class ListFragment extends Fragment {
 		isAddedNewMemo = _isAddedNewMemo;
 		return this;
 	}
+
+
 }

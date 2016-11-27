@@ -6,6 +6,8 @@
         <item name="colorPrimary">#81c1c2</item>
         <item name="colorPrimaryDark">#81c1c2</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
