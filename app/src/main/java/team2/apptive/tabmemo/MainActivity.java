@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// Open DB
 		dbHelper = new DBHelper(getApplicationContext(), "Memo.db", null, 1);
+		dbHelper.deleteNullMemo(); // db 정리
 
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -82,20 +82,23 @@ public class ListFragment extends Fragment {
 					}
 				});
 
-				// 빈 메모 삭제후 맨 위에 펼쳐있는 경우 제거
-				if(!isAddedNewMemo)
-					listView.collapseGroupWithAnimation(0);
+
+
 
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
-				 if (!isLongClicked && !adapter.isNewMemo()) { // is not long clicked
+				if (!isLongClicked && !adapter.isNewMemo()) { // is not long clicked
 					if (listView.isGroupExpanded(groupPosition)) {
 						listView.collapseGroupWithAnimation(groupPosition);
 					} else {
 						listView.expandGroupWithAnimation(groupPosition);
 					}
 				}
+
+				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 매가 펼쳐지는 경우 제거하기
+				 else if(!isAddedNewMemo)
+					 listView.collapseGroupWithAnimation(0);
 
 				listView.requestFocus();
 				System.out.println("onGroupClick!! " + groupPosition + " " + id + " focused?: " + listView.isFocused());

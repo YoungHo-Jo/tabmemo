@@ -164,5 +164,11 @@ public class DBHelper extends SQLiteOpenHelper {
 		return s;
 	}
 
+	public void deleteNullMemo(){
+		SQLiteDatabase db = getWritableDatabase();
+		db.execSQL("delete from MEMO where memo = null;");
+		db.close();
+	}
+
 
 }
