@@ -28,12 +28,15 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+	CustomDialog mCustomDialog;
 	private final long FINISH_INTERVAL_TIME = 2000;
 	private long backPressedTime = 0;
 	private Fragment listFragment = null;
 	private DBHelper dbHelper = null;
-
+	private EditText input;
+	private ListView categoryListView;
+	private Button addButton;
+	ArrayList<String> items = new ArrayList<>();
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,59 +75,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		});
 
 		// Button (add new category)
-		final Button addButton = (Button) findViewById(R.id.navigation_button);
+		 addButton = (Button) findViewById(R.id.navigation_button);
+		categoryListView = (ListView) findViewById(R.id.navigation_list);
 
 		// category items
-		final ArrayList<String> items = new ArrayList<>();
 
 		// from db
 		makeItemsForCategoryList(items);
 
 		// setting category listview
 		final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
-		final ListView categoryListView = (ListView) findViewById(R.id.navigation_list);
-		categoryListView.setAdapter(adapter);
-
-		addButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				final AlertDialog.Builder alert = new AlertDialog.Builder(addButton.getContext());
-				final EditText input = new EditText(addButton.getContext());
-				final Button black = (Button) findViewById(R.id.black_color);
-
-				alert.setTitle("카테고리를 입력하세요");
-				alert.setView(black);
-				alert.setView(input);
-
-				alert.setPositiveButton("만들기", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						String value = input.getText().toString();
-						if (value.equals("")) {
-							Toast.makeText(alert.getContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
-						}
-						//공백이 아닐 때 처리할 내용
-						else {
-							items.add("# " + input.getText().toString());
-
-							// insert to db
-							dbHelper.newInsert("제목없음", "# " + input.getText().toString());
-							adapter.notifyDataSetChanged();
-							dialog.dismiss();
-							alert.create();
-						}
-					}
-				});
-				alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						//Cancel
-						dialog.dismiss();
-						alert.create();
-					}
-				});
-				alert.show();
-			}
-		});
-
-
 	}
 
 
@@ -179,6 +139,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 	}
+
+	public void onClickView(View v) {
+		switch (v.getId()) {
+			case R.id.navigation_button:
+				mCustomDialog = new CustomDialog(this,
+					leftClickListener,
+					rightClickListener);
+					mCustomDialog.show();
+				break;
+		}
+	}
+
+
+	private View.OnClickListener leftClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			String value = input.getText().toString();
+			input = new EditText(addButton.getContext());
+			final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
+			while (true) {
+				if (value == "") {
+					Toast.makeText(getApplicationContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
+				}
+				//공백이 아닐 때 처리할 내용
+				if (value != null) {
+					items.add("#" + input.getText().toString());
+					adapter.notifyDataSetChanged();
+				}
+			}
+		}
+	};
+
+	private View.OnClickListener rightClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+		}
+	};
+
 
 
 	public void makeItemsForCategoryList(ArrayList<String> items) {
