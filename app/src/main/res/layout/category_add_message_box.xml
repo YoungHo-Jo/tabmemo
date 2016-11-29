@@ -1,152 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-							android:layout_width="fill_parent"
-							android:layout_height="fill_parent"
-							android:gravity="center"
-							android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:gravity="center"
+              android:orientation="vertical" >
 
-	<LinearLayout
-			android:layout_width="300dip"
-			android:layout_height="200dip"
-			android:background="@android:color/white"
-			android:orientation="vertical"
-			>
+    <LinearLayout
+        android:layout_width="320dip"
+        android:layout_height="225dip"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_new"
+        android:layout_marginBottom="300dp"
+        >
 
-		<TextView
-				android:id="@+id/tv_title"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:background="#292929"
-				android:gravity="center"
-				android:text="카테고리 추가"
-				android:textColor="@android:color/white"
-				android:textColorHighlight="@android:color/white"
-				android:textSize="20sp"
-				/>
 
-		<LinearLayout
-				android:id="@+id/tv_content"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dp"
-				android:gravity="center"
-				android:orientation="vertical"
-				android:textColor="@android:color/black"
-				android:textSize="40sp">
 
-			<LinearLayout
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="5dp"
-					android:gravity="center">
+        <LinearLayout
+            android:id="@+id/tv_content"
+            android:orientation="vertical"
+            android:layout_marginTop="15dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="40sp">
+            <RadioGroup
+                android:id="@+id/color_radio"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:weightSum="1"
+                android:gravity="center"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:button="@null"
+                    android:id="@+id/black"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/first_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/second_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/third_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/four_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:button="@null"
+                    android:id="@+id/pink"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/five_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:id="@+id/mint"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/six_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:id="@+id/yellow"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/seven_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+                <RadioButton
+                    android:button="@null"
+                    android:id="@+id/light_green"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/eight_color"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+            </LinearLayout>
+            </RadioGroup>
+        </LinearLayout>
 
-				<Button
-						android:id="@+id/black"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#292929"/>
+        <EditText
+            android:maxLength="8"
+            android:lines="1"
+            android:cursorVisible="false"
+            android:layout_marginTop="20dp"
+            android:id="@+id/Messagebox_edit"
+            android:layout_width="200dp"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="textCapSentences|textNoSuggestions|textEmailAddress"
+            android:gravity="start"
+            android:hint="카테고리 이름"
+            android:maxLines="1"
+            android:textColor="@android:color/black"
+            android:textSize="25dp"
+            android:autoText="false"
+            />
+        <View
+            android:layout_width="200dp"
+            android:layout_gravity="center"
+            android:layout_height="1dp"
+            android:background="#D9D9D9"
+            android:layout_marginBottom="15dp"/>
 
-				<Button
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#fc0a0a"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            >
 
-				<Button
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#150edf"/>
+            <Button
+                android:id="@+id/bt_left"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="match_parent"
+                android:background="@drawable/dialog_delete"
+                android:textColor="#8a8a8a"
+                android:textSize = "20sp"
+                android:text="삭제" />
 
-				<Button
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#d4fc0a"/>
+            <Button
+                android:id="@+id/bt_right"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="match_parent"
+                android:background="@drawable/dialog_complete"
+                android:textColor="#101818"
+                android:textSize = "20sp"
+                android:text="완료" />
+        </LinearLayout>
+    </LinearLayout>
 
-				<Button
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#40ff06"/>
-			</LinearLayout>
-
-			<LinearLayout
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="10dp"
-					android:gravity="center">
-
-				<Button
-						android:id="@+id/pink"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#ff00fb"/>
-
-				<Button
-						android:id="@+id/mint"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#00ffe1"/>
-
-				<Button
-						android:id="@+id/yellow"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#ffc400"/>
-
-				<Button
-						android:id="@+id/light_green"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#00ff6a"/>
-
-				<Button
-						android:id="@+id/purple"
-						android:layout_width="30dp"
-						android:layout_height="30dp"
-						android:layout_marginRight="10dp"
-						android:background="#a100ff"/>
-			</LinearLayout>
-		</LinearLayout>
-
-		<EditText
-				android:id="@+id/Messagebox_edit"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:gravity="center"
-				android:hint="Ex) 장보기, 선물사기"
-				android:textColor="@android:color/black"
-				android:textSize="20sp"/>
-
-		<LinearLayout
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dp"
-				android:gravity="center"
-				android:orientation="horizontal">
-
-			<Button
-					android:id="@+id/bt_left"
-					android:layout_width="150dp"
-					android:layout_height="wrap_content"
-					android:background="@android:color/white"
-					android:text="만들기"
-					android:textColor="#ff48d1"/>
-
-			<Button
-					android:id="@+id/bt_right"
-					android:layout_width="150dp"
-					android:layout_height="wrap_content"
-					android:background="@android:color/white"
-					android:text="취소"
-					android:textColor="#ff48d1"/>
-		</LinearLayout>
-	</LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

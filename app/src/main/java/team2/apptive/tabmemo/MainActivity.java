@@ -1,24 +1,35 @@
 package team2.apptive.tabmemo;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,12 +41,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private long backPressedTime = 0;
 	private Fragment listFragment = null;
 	private DBHelper dbHelper = null;
-	private EditText categoryInput = null;
-	private ListView categoryListView = null;
-	private Button addButton;
-	ArrayList<String> items = new ArrayList<>();
-	ArrayList<String> color_buttons = new ArrayList<>();
-
+	private EditText input = null;
+	private Button addButton = null;
+	private ListView categoryListView = (ListView) findViewById(R.id.navigation_list);
+	private ArrayList<String> items = new ArrayList<>();
+	private ArrayList<String> color_buttons = new ArrayList<>();
+	private ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		dbHelper = new DBHelper(getApplicationContext(), "Memo.db", null, 1);
 		dbHelper.deleteNullMemo(); // db 정리
 
+		categoryListView.setAdapter(adapter);
+
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -58,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 		drawer.setDrawerListener(toggle);
 		toggle.syncState();
+
 
 		// NavigationView
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -73,18 +87,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		});
 
 		// Button (add new category)
-		View categoryInputView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
-		categoryInput = (EditText) categoryInputView.findViewById(R.id.Messagebox_edit);
-		addButton = (Button) findViewById(R.id.navigation_button);
-		categoryListView = (ListView) findViewById(R.id.navigation_list);
-
+		 addButton = (Button) findViewById(R.id.navigation_button);
+		input = (EditText)findViewById(R.id.Messagebox_edit);
 		// category items
+
 
 		// from db
 		makeItemsForCategoryList(items);
-
 		// setting category listview
-		final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
+
 	}
 
 
@@ -118,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		return true;
 	}
 
+
+
 	// 뒤로가기 두번 두르면 종료
 	@Override
 	public void onBackPressed() {
@@ -137,34 +150,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				Toast.makeText(getApplicationContext(), "종료하려면 한 번더 !", Toast.LENGTH_LONG).show();
 			}
 		}
+
 	}
 
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
 				mCustomDialog = new CustomDialog(this,
-								leftClickListener,
-								rightClickListener);
-				mCustomDialog.show();
+					leftClickListener,
+					rightClickListener);
+					mCustomDialog.show();
 				break;
 		}
 	}
 
+
 	private View.OnClickListener leftClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-
-			String value = categoryInput.getText().toString();
-			System.out.println(value);
-			final ArrayAdapter adapter = new ArrayAdapter(addButton.getContext(), android.R.layout.simple_list_item_1, items);
-
-			if (value.equals("")) {
-				Toast.makeText(getApplicationContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
-			}
-			//공백이 아닐 때 처리할 내용
-			else {
-				items.add("# " + value);
-				adapter.notifyDataSetChanged();
+			int result = 0;
+			String value =  input.getText().toString();
+			String non = "";
+			result = value.compareTo(non);
+			while (true) {
+				if (result == 0) {
+					Toast.makeText(getApplicationContext(), "제대로좀 쳐라", Toast.LENGTH_SHORT).show();
+					mCustomDialog.dismiss();
+					break;
+				}
+				//공백이 아닐 때 처리할 내용
+				if (value != null) {
+					items.add(" # " + value);
+					adapter.notifyDataSetChanged();
+					mCustomDialog.dismiss();
+					break;
+				}
 			}
 		}
 	};
@@ -172,8 +192,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private View.OnClickListener rightClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			mCustomDialog.dismiss();
 		}
 	};
+
 
 
 	public void makeItemsForCategoryList(ArrayList<String> items) {
@@ -191,7 +213,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	}
 
 
-	public ListFragment getCurrentListFragment() {
+	public ListFragment getCurrentListFragment()
+	{
 		return (ListFragment) listFragment;
 	}
 
@@ -199,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	protected void onResume() {
 		//((ListFragment)listFragment).getAdapter().notifyDataSetChanged();
 		super.onResume();
+
 		System.out.println("onResume!");
 	}
 }
