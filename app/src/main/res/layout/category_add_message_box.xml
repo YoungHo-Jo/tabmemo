@@ -1,142 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="center"
-              android:orientation="vertical" >
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							android:gravity="center"
+							android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="300dip"
-        android:layout_height="200dip"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        >
+	<LinearLayout
+			android:layout_width="300dip"
+			android:layout_height="200dip"
+			android:background="@android:color/white"
+			android:orientation="vertical"
+			>
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="카테고리 추가"
-            android:textColorHighlight="@android:color/white"
-            android:background="#292929"
-            android:textSize="20sp"
-            android:textColor="@android:color/white"
-            />
+		<TextView
+				android:id="@+id/tv_title"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="#292929"
+				android:gravity="center"
+				android:text="카테고리 추가"
+				android:textColor="@android:color/white"
+				android:textColorHighlight="@android:color/white"
+				android:textSize="20sp"
+				/>
 
-        <LinearLayout
-            android:id="@+id/tv_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="40sp">
-            <LinearLayout
-                android:layout_marginTop="5dp"
-                android:gravity="center"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/black"
-                    android:layout_marginRight="10dp"
-                    android:background="#292929"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:layout_marginRight="10dp"
-                    android:background="#fc0a0a"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:layout_marginRight="10dp"
-                    android:background="#150edf"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:layout_marginRight="10dp"
-                    android:background="#d4fc0a"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:layout_marginRight="10dp"
-                    android:background="#40ff06"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/pink"
-                    android:layout_marginRight="10dp"
-                    android:background="#ff00fb"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:id="@+id/mint"
-                    android:layout_marginRight="10dp"
-                    android:background="#00ffe1"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:id="@+id/yellow"
-                    android:layout_marginRight="10dp"
-                    android:background="#ffc400"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:id="@+id/light_green"
-                    android:layout_marginRight="10dp"
-                    android:background="#00ff6a"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-                <Button
-                    android:id="@+id/purple"
-                    android:layout_marginRight="10dp"
-                    android:background="#a100ff"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"/>
-            </LinearLayout>
-        </LinearLayout>
+		<LinearLayout
+				android:id="@+id/tv_content"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:gravity="center"
+				android:orientation="vertical"
+				android:textColor="@android:color/black"
+				android:textSize="40sp">
 
-        <EditText
-            android:id="@+id/Messagebox_edit"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ex) 장보기, 선물사기"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            />
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            >
+				<Button
+						android:id="@+id/black"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#292929"/>
 
-            <Button
-                android:id="@+id/bt_left"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:textColor="#ff48d1"
-                android:text="만들기" />
+				<Button
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#fc0a0a"/>
 
-            <Button
-                android:id="@+id/bt_right"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:textColor="#ff48d1"
-                android:text="취소" />
-        </LinearLayout>
-    </LinearLayout>
+				<Button
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#150edf"/>
+
+				<Button
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#d4fc0a"/>
+
+				<Button
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#40ff06"/>
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:gravity="center">
+
+				<Button
+						android:id="@+id/pink"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#ff00fb"/>
+
+				<Button
+						android:id="@+id/mint"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#00ffe1"/>
+
+				<Button
+						android:id="@+id/yellow"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#ffc400"/>
+
+				<Button
+						android:id="@+id/light_green"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#00ff6a"/>
+
+				<Button
+						android:id="@+id/purple"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:layout_marginRight="10dp"
+						android:background="#a100ff"/>
+			</LinearLayout>
+		</LinearLayout>
+
+		<EditText
+				android:id="@+id/Messagebox_edit"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:hint="Ex) 장보기, 선물사기"
+				android:textColor="@android:color/black"
+				android:textSize="20sp"/>
+
+		<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:gravity="center"
+				android:orientation="horizontal">
+
+			<Button
+					android:id="@+id/bt_left"
+					android:layout_width="150dp"
+					android:layout_height="wrap_content"
+					android:background="@android:color/white"
+					android:text="만들기"
+					android:textColor="#ff48d1"/>
+
+			<Button
+					android:id="@+id/bt_right"
+					android:layout_width="150dp"
+					android:layout_height="wrap_content"
+					android:background="@android:color/white"
+					android:text="취소"
+					android:textColor="#ff48d1"/>
+		</LinearLayout>
+	</LinearLayout>
 
 </LinearLayout>

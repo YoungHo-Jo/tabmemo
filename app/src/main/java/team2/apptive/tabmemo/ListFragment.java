@@ -58,7 +58,10 @@ public class ListFragment extends Fragment {
 
 		// listivew에 adapter 연결
 		listView = (AnimatedExpandableListView) view.findViewById(R.id.ll_expandable);
+		listView.setGroupIndicator(null);
 		listView.setAdapter(adapter);
+		listView.setDivider(null);
+
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
@@ -83,8 +86,6 @@ public class ListFragment extends Fragment {
 				});
 
 
-
-
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
@@ -97,8 +98,8 @@ public class ListFragment extends Fragment {
 				}
 
 				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 매가 펼쳐지는 경우 제거하기
-				 else if(!isAddedNewMemo)
-					 listView.collapseGroupWithAnimation(0);
+				else if (!isAddedNewMemo)
+					listView.collapseGroupWithAnimation(0);
 
 				listView.requestFocus();
 				System.out.println("onGroupClick!! " + groupPosition + " " + id + " focused?: " + listView.isFocused());
@@ -107,7 +108,7 @@ public class ListFragment extends Fragment {
 		});
 
 		// new memo will be expanded and have a cursor on it
-		if(isAddedNewMemo) {
+		if (isAddedNewMemo) {
 			listView.expandGroupWithAnimation(0);
 			adapter.setIsNewMemo(true);
 			isAddedNewMemo = false;
@@ -132,10 +133,10 @@ public class ListFragment extends Fragment {
 			item = new ExpandableItem.GroupItem(); // new group item
 			citem = new ExpandableItem.ChildItem(); // new child item
 
-			if(cursor.getString(2) != null && cursor.getString(2).equals(""))
+			if (cursor.getString(2) != null && cursor.getString(2).equals(""))
 				dbHelper.updatMemoToNull(id);
 
-			if(cursor.getString(2) != null) {
+			if (cursor.getString(2) != null) {
 				item.id = id; // give item an id
 				item.title = cursor.getString(1); // give item a memo
 
@@ -174,8 +175,8 @@ public class ListFragment extends Fragment {
 
 	public ListFragment setIsAddedNewMemo(boolean _isAddedNewMemo) {
 		isAddedNewMemo = _isAddedNewMemo;
+
 		return this;
 	}
-
-
 }
+

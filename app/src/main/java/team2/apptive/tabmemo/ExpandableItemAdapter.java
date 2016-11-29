@@ -3,6 +3,8 @@ package team2.apptive.tabmemo;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,8 +71,9 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			public void onClick(View v) {
 				final EditableTextView editView = (EditableTextView) v;
 				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
-				editView.setEditMode(editView.isFocused()); // editable memo
+				editView.setEditMode(true); // editable memo
 				editView.requestFocus(); // focusing on memo
+
 
 //				editView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 //					@Override
@@ -123,13 +126,28 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				System.out.println("holder.memo.hasFocus changed: " + hasFocus);
-				EditableTextView focusedEditView = (EditableTextView) v;
+				final EditableTextView focusedEditView = (EditableTextView) v;
 				dbHelper = new DBHelper(focusedEditView.getContext(), "Memo.db", null, 1);
 				InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE); // for keyboard
 				if (hasFocus) {
+					focusedEditView.setEditMode(true);
 
+					focusedEditView.addTextChangedListener(new TextWatcher() {
+						@Override
+						public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+						}
+
+						@Override
+						public void onTextChanged(CharSequence s, int start, int before, int count) {
+						}
+
+						@Override
+						public void afterTextChanged(Editable s) {
+						}
+					});
 				} else {
-					// Store Memoqqqq
+					// Store Memo
 					((EditableTextView) v).setEditMode(false);
 					isNewMemo = false;
 					System.out.println("EditMode is false --> Save memo!!");
@@ -147,16 +165,27 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		});
 
 
+
+
 		// (개선필요) 한 곳에서 쭉 적다가, 리스트뷰를 내리거나 올려서 수정하던 메모가 destroy 되면 저장이 되지 않는 문제 발생
 		// textwatcher를 통해서 실시간으로 저장을 하였으나, 다른 focused 메모 혹은 자식 메모간 혼란으로 인해 다른 메모에 같은 내용이 저장되는 등 버그가 다수 발견
 		// 방향: focued 된 view는 destroy 되지않게하고 계속 유지할 수 있게 해주면 좋을듯하다.
-		// 또한 자식 메모에 키보드를 통해서 입력 시도시, 여러번 눌러야 하고, 커서의 위치가 부자연스러운등 개선이 필요
+		// 위의 경우가 이러나는 일은, 적는도중 리스트를 내렸을때에 해당되므로, 다른 곳을 한번만이라도 눌러서 포커스를 바꾸면 저장이되기 때문에,
+		// 임시적으로 내용을 저장하고, 그 것을 리스트를 불러올때 다시 불러와주는 형식으로 진행하고 저장은 포커스가 바뀔떄만 해주는것이 버그를 에방할 수 있을 것이라 판단됨됨		// 또한 자식 메모에 키보드를 통해서 입력 시도시, 여러번 눌러야 하고, 커서의 위치가 부자연스러운등 개선이 필요
 
 		// new Memo for spreading memo and focus it
 		if (isNewMemo && groupPosition == 0 && childPosition == 0) {
 			holder.memo.setEditMode(true);
 			holder.memo.requestFocus();
 		}
+
+		// cursor 끝으로
+		holder.memo.setSelection(holder.memo.length());
+
+		// 리스트뷰 올라가면 텍스트 사라지는 문제 해결하기
+		// if(holder.memo.isEditMode() && holder.memo.isFocused())
+
+
 
 		return convertView;
 	}
