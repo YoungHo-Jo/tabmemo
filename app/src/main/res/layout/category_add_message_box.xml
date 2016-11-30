@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="center"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="320dip"
+        android:layout_width="300dip"
         android:layout_height="225dip"
         android:orientation="vertical"
         android:background="@drawable/dialog_new"
-        android:layout_marginBottom="300dp"
-        >
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
 
 
@@ -36,13 +35,16 @@
                 android:layout_height="wrap_content">
                 <RadioButton
                     android:button="@null"
-                    android:id="@+id/black"
+                    android:clickable="true"
+                    android:id="@+id/first_col"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/first_color"
                     android:layout_width="40dp"
                     android:layout_height="40dp"/>
                 <RadioButton
+                    android:id="@+id/second_col"
+                    android:clickable="true"
                     android:button="@null"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -50,6 +52,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"/>
                 <RadioButton
+                    android:id="@+id/third_col"
+                    android:clickable="true"
                     android:button="@null"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -57,6 +61,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"/>
                 <RadioButton
+                    android:id="@+id/fourth_col"
+                    android:clickable="true"
                     android:button="@null"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -64,44 +70,49 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"/>
             </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:button="@null"
-                    android:id="@+id/pink"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/five_color"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
-                <RadioButton
-                    android:button="@null"
-                    android:id="@+id/mint"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/six_color"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
-                <RadioButton
-                    android:button="@null"
-                    android:id="@+id/yellow"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/seven_color"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
-                <RadioButton
-                    android:button="@null"
-                    android:id="@+id/light_green"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/eight_color"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
-            </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:id="@+id/fifth_col"
+                        android:clickable="true"
+                        android:button="@null"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/five_color"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+                    <RadioButton
+                        android:id="@+id/sixth_col"
+                        android:clickable="true"
+                        android:button="@null"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/six_color"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+                    <RadioButton
+                        android:id="@+id/seventh_col"
+                        android:clickable="true"
+                        android:button="@null"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/seven_color"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+                    <RadioButton
+                        android:id="@+id/eight_col"
+                        android:clickable="true"
+                        android:button="@null"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/eight_color"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+                </LinearLayout>
             </RadioGroup>
         </LinearLayout>
 
@@ -115,7 +126,6 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:inputType="textCapSentences|textNoSuggestions|textEmailAddress"
             android:gravity="start"
             android:hint="카테고리 이름"
             android:maxLines="1"
