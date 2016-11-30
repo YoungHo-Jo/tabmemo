@@ -61,7 +61,7 @@ public class AnimatedExpandableListView extends ExpandableListView {
 	public void setAdapter(ExpandableListAdapter adapter) {
 		super.setAdapter(adapter);
 
-		// Make sure that the adapter extends AnimatedExpandableListAdapter
+		// Make sure that the categoryListAdapter extends AnimatedExpandableListAdapter
 		if (adapter instanceof AnimatedExpandableListAdapter) {
 			this.adapter = (AnimatedExpandableListAdapter) adapter;
 			this.adapter.setParent(this);
@@ -90,7 +90,7 @@ public class AnimatedExpandableListView extends ExpandableListView {
 			}
 		}
 
-		// Let the adapter know that we are starting the animation...
+		// Let the categoryListAdapter know that we are starting the animation...
 		adapter.startExpandAnimation(groupPos, 0);
 
 		return expandGroup(groupPos);

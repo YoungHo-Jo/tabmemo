@@ -2,6 +2,6 @@
 <resources>
 	<color name="colorPrimary">#81c1c2</color>
 	<color name="colorPrimaryDark">#81c1c2</color>
-	<color name="colorAccent">#FF4081</color>
+	<color name="colorAccent">#81c1c2</color>
 	<color name="colorSatusBar">#81c1c2</color>
 </resources>

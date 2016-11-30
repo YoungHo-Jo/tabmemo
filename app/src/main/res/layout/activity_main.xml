@@ -5,15 +5,15 @@
 		xmlns:tools="http://schemas.android.com/tools"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+		android:background="@color/colorPrimary"
 		android:fitsSystemWindows="true"
-		tools:context=".MainActivity"
-		android:background="@color/colorPrimary">
+		tools:context=".MainActivity">
 
 	<android.support.design.widget.AppBarLayout
+			android:id="@+id/appbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:theme="@style/AppTheme.AppBarOverlay"
-			android:id="@+id/appbar">
+			android:theme="@style/AppTheme.AppBarOverlay">
 
 		<FrameLayout
 				android:layout_width="match_parent"
@@ -69,30 +69,32 @@
 					android:layout_height="match_parent"
 					android:background="#F2F2F2"
 					android:orientation="vertical"
-					android:weightSum="10">
+					android:weightSum="100">
 
-				<TextView
+				<Button
+						android:id="@+id/btCategoryAll"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-						android:layout_weight="0.7"
+						android:layout_weight="6"
 						android:background="#F2F2F2"
-						android:clickable="true"
 						android:gravity="start|center"
-						android:onClick="Total_"
+						android:paddingEnd="5dp"
+						android:paddingStart="5dp"
 						android:text="@string/category_all"
-						android:textSize="20dp"/>
+						android:textSize="17dp"/>
 
-				<TextView
+				<Button
+						android:id="@+id/btCategoryUnSorted"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_gravity="bottom"
-						android:layout_weight="0.7"
+						android:layout_weight="6"
 						android:background="#F2F2F2"
-						android:clickable="true"
 						android:gravity="start|center"
-						android:onClick="Unsorted"
+						android:paddingEnd="5dp"
+						android:paddingStart="5dp"
 						android:text="@string/category_nonSorted"
-						android:textSize="20dp"/>
+						android:textSize="17dp"/>
 
 				<View
 						android:layout_width="match_parent"
@@ -103,17 +105,17 @@
 						android:id="@+id/navigation_list"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-						android:layout_weight="7.6"
+						android:layout_weight="82"
 						android:background="#F2F2F2">
 				</ListView>
 
 				<Button
-						android:onClick="onClickView"
 						android:id="@+id/navigation_button"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-						android:layout_weight="1"
-						android:background="#D3E3"/>
+						android:layout_weight="6"
+						android:background="#dd00ffe1"
+						android:onClick="onClickView"/>
 			</LinearLayout>
 		</android.support.design.widget.NavigationView>
 	</android.support.v4.widget.DrawerLayout>

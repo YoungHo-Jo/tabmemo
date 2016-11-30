@@ -1,6 +1,8 @@
 package team2.apptive.tabmemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.database.Cursor;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -49,14 +53,14 @@ public class ListFragment extends Fragment {
 		// Open Db
 		dbHelper = new DBHelper(view.getContext(), "Memo.db", null, 1);
 
-		// make group items to display
+		// make group categoryItems to display
 		makeGroupItemsForViewByCategory(category);
 
-		// listview 에 보이게할 내용을 adapter 에 연결
+		// listview 에 보이게할 내용을 categoryListAdapter 에 연결
 		adapter = new ExpandableItemAdapter(view.getContext());
 		adapter.setData(items);
 
-		// listivew에 adapter 연결
+		// listivew에 categoryListAdapter 연결
 		listView = (AnimatedExpandableListView) view.findViewById(R.id.ll_expandable);
 		listView.setGroupIndicator(null);
 		listView.setAdapter(adapter);
@@ -71,14 +75,52 @@ public class ListFragment extends Fragment {
 				isLongClicked = false;
 				listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
-					public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
 
 						TextView titleView = (TextView) view.findViewById(R.id.tv_title);
 						System.out.println("group item is long clicked! " + titleView.getText());
-						titleView.setText("haha");
 
 
 						// 타이틀 수정 기능 필요
+						View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
+						AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
+						dialogBuilder.setView(modifyingMemoTitleView);
+
+						final Dialog memoTitleDialog = dialogBuilder.create();
+
+						final EditText etMemoTitle = (EditText) modifyingMemoTitleView.findViewById(R.id.et_modifyingMemoTitle);
+						etMemoTitle.setText(titleView.getText().toString().equals("제목 없음") ?
+							"" : titleView.getText().toString());
+
+						Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
+						Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
+
+						btConfirmTitle.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								System.out.println("btConfirmTitle Clicked!");
+								String newTitle = etMemoTitle.getText().toString();
+								String titleId = items.get(position).id;
+
+								dbHelper.updateTitle(newTitle, titleId);
+								items.get(position).title = newTitle;
+								memoTitleDialog.dismiss();
+							}
+						});
+
+						btDeleteMemo.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								System.out.println("btDeleteMemo Clicked!");
+								dbHelper.deleteByTime(items.get(position).id);
+								items.remove(position);
+								adapter.notifyDataSetChanged();
+								memoTitleDialog.dismiss();
+							}
+						});
+
+						memoTitleDialog.show();
+
 
 						isLongClicked = true;
 						return true;
@@ -135,6 +177,8 @@ public class ListFragment extends Fragment {
 
 			if (cursor.getString(2) != null && cursor.getString(2).equals(""))
 				dbHelper.updatMemoToNull(id);
+			if (cursor.getString(1).equals("")) // preventing title "" shown
+				dbHelper.updatMemoToNull(id);
 
 			if (cursor.getString(2) != null) {
 				item.id = id; // give item an id
@@ -154,8 +198,9 @@ public class ListFragment extends Fragment {
 
 	}
 
-	public void setCategoryForListView(String _category) {
+	public ListFragment setCategoryForListView(String _category) {
 		category = _category;
+		return this;
 	}
 
 	public void addNewTitleMemo(String title, String category) {

@@ -132,20 +132,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				if (hasFocus) {
 					focusedEditView.setEditMode(true);
 
-					focusedEditView.addTextChangedListener(new TextWatcher() {
-						@Override
-						public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-						}
-
-						@Override
-						public void onTextChanged(CharSequence s, int start, int before, int count) {
-						}
-
-						@Override
-						public void afterTextChanged(Editable s) {
-						}
-					});
 				} else {
 					// Store Memo
 					((EditableTextView) v).setEditMode(false);
