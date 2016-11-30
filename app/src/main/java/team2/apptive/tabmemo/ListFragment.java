@@ -3,6 +3,7 @@ package team2.apptive.tabmemo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -120,7 +121,7 @@ public class ListFragment extends Fragment {
 						});
 
 						memoTitleDialog.show();
-
+						etMemoTitle.setSelection(etMemoTitle.length());
 
 						isLongClicked = true;
 						return true;
@@ -164,12 +165,18 @@ public class ListFragment extends Fragment {
 	public void makeGroupItemsForViewByCategory(String category) {
 		ExpandableItem.GroupItem item;
 		ExpandableItem.ChildItem citem;
+		Cursor cursor;
 
 		// from db, inserting to group item and child item
 		// 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
 		// 현재 시간 내림차순으로 정렬해서 출력한다.
 		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
-		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
+		if(category.equals("전체 메모"))
+			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO order by time desc", null);
+		else if(category.equals("미분류"))
+			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '전체 메모' order by time desc", null);
+		else
+			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
 		while (cursor.moveToNext()) {
 			String id = cursor.getString(7); // db: position
 			item = new ExpandableItem.GroupItem(); // new group item

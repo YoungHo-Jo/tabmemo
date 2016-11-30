@@ -132,7 +132,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				if (hasFocus) {
 					focusedEditView.setEditMode(true);
 
-
+				//	inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 				} else {
 					// Store Memo
 					((EditableTextView) v).setEditMode(false);

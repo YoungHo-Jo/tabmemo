@@ -14,10 +14,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	ArrayList<String> categoryItems = new ArrayList<>();
 	ArrayList<String> color_buttons = new ArrayList<>();
 	ArrayAdapter<String> categoryListAdapter;
-	private String currentCategory = "";
+	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
 
 	@Override
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// toolbar category title
 		tvToolbarCategoryTitle = (TextView) findViewById(R.id.tv_toolbar_category_title);
-		tvToolbarCategoryTitle.setText(currentCategory.equals("") ? "전체 메모" : currentCategory);
+		tvToolbarCategoryTitle.setText(currentCategory);
 
 		categoryListView = (ListView) findViewById(R.id.navigation_list);
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		categoryListView.setPadding(5, 0, 0, 0);
 
 
-		listFragment = showFragment(ListFragment.newInstance());
+		listFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 
 		// Open DB
 		dbHelper = new DBHelper(getApplicationContext(), "Memo.db", null, 1);
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				setCurrentCategory(categoryItems.get(position));
 				makeListFragmentByCategory();
-				refreshToolbarCategroyTitle();
+				refreshToolbarCategoryTitle();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		btCategoryAll.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setCurrentCategory("");
+				setCurrentCategory("전체 메모");
 				makeListFragmentByCategory();
-				refreshToolbarCategroyTitle();
+				refreshToolbarCategoryTitle();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -136,9 +136,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		btCategoryUnSorted.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setCurrentCategory("");
+				setCurrentCategory("미분류");
 				makeListFragmentByCategory();
-				refreshToolbarCategroyTitle();
+				refreshToolbarCategoryTitle();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -181,9 +181,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					Toast.makeText(getApplicationContext(), "공백입니다.", Toast.LENGTH_SHORT).show();//					mCustomDialog.dismiss();
 				} else {
 					categoryItems.add("# " + value);
-					dbHelper.newInsert("", "# " + value);
 					categoryListAdapter.notifyDataSetChanged();
+					dbHelper.newInsert("제목 없음", "# " + value);
 					setDismiss(mMainDialog);
+					setCurrentCategory("# " + value);
+					refreshToolbarCategoryTitle();
+
+					DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+					drawer.closeDrawer(GravityCompat.START);
+
+					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 				}
 			}
 
@@ -243,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// ((ListFragment) listFragment).addNewTitleMemo("No Title", "");
 		// new listFragment --> memory ???
 
-		dbHelper.newInsert("제목 없음", currentCategory);
+		dbHelper.newInsert("제목 없음", currentCategory.equals("미분류") ? "전체 메모" : currentCategory);
 		showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 	}
 
@@ -286,9 +293,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
 		// 현재 시간 내림차순으로 정렬해서 출력한다.
 		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
-		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category != \"\" order by time asc", null);
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select distinct category from MEMO order by time asc", null);
 		while (cursor.moveToNext()) {
-			String category = cursor.getString(4); // db: category
+			System.out.println(cursor.getColumnCount());
+			String category = cursor.getString(0); // db: category
+			if(category.equals("전체 메모"))
+				continue;
 
 			items.add(category); // new categoryItems for category
 		}
@@ -316,12 +326,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 	public void makeListFragmentByCategory()
 	{
-		showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory.equals("") ? "*" : currentCategory));
+		showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 	}
 
-	public void refreshToolbarCategroyTitle()
+	public void refreshToolbarCategoryTitle()
 	{
-		tvToolbarCategoryTitle.setText(currentCategory.equals("") ? "전체 메모" : currentCategory);
+		tvToolbarCategoryTitle.setText(currentCategory);
 	}
 
 }
