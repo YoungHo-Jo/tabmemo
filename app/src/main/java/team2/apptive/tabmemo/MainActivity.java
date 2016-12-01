@@ -3,6 +3,7 @@ package team2.apptive.tabmemo;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	ListView categoryListView;
 	ArrayList<String> categoryItems = new ArrayList<>();
 	ArrayList<String> color_buttons = new ArrayList<>();
+	private RadioGroup mRgline1;
+	private RadioGroup mRgline2;
+	int radiocheckId;
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		categoryListView.setPadding(5, 0, 0, 0);
 
 
+
 		listFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 
 		// Open DB
@@ -85,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		drawer.setDrawerListener(toggle);
-		toggle.syncState();
+//		drawer.setDrawerListener(toggle);
+//		toggle.syncState();
 
 
 		// NavigationView
@@ -118,6 +125,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
+    categoryListView.setOnLongClickListener(new AdapterView.OnItemLongClickListener(){
+      @Override
+      public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            mMainDialog = createDialog();
+            WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+            wm.copyFrom(mMainDialog.getWindow().getAttributes());
+            wm.height = 225;
+            wm.width = 255;
+            mMainDialog.getWindow().setGravity(Gravity.TOP);
+            mMainDialog.show();
+        return false;
+        }
+    });
+
 		// ( 수정 필요 !!!)
 		// Category All Memo Button Click Event
 		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
@@ -145,6 +166,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 	}
 
+	private RadioGroup.OnCheckedChangeListener listener1 = new RadioGroup.OnCheckedChangeListener() {
+
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			if (checkedId != -1) {
+				mRgline2.setOnCheckedChangeListener(null);
+				mRgline2.clearCheck();
+				mRgline2.setOnCheckedChangeListener(listener2);
+				radiocheckId = checkedId;
+				System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
+				System.out.println("!!!!!!!!!!!!!!!  "+checkedId);
+			}
+		}
+	};
+
+	private RadioGroup.OnCheckedChangeListener listener2 = new RadioGroup.OnCheckedChangeListener() {
+
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			if (checkedId != -1) {
+				mRgline1.setOnCheckedChangeListener(null);
+				mRgline1.clearCheck();
+				mRgline1.setOnCheckedChangeListener(listener1);
+				radiocheckId = checkedId;
+			}
+		}
+	};
+
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
@@ -153,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				wm.copyFrom(mMainDialog.getWindow().getAttributes());
 				wm.height = 225;
 				wm.width = 255;
-				// mMainDialog.getWindow().setGravity(Gravity.TOP);
+				mMainDialog.getWindow().setGravity(Gravity.TOP);
 				mMainDialog.show();
 				break;
 		}
@@ -163,14 +212,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
 		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
-
+		final ActionBar actionBar = getSupportActionBar();
 		mMainDialog = ab.create();
+
+		mRgline1 = (RadioGroup)innerView.findViewById(R.id.color_radio);
+		mRgline1.clearCheck();
+		mRgline1.setOnCheckedChangeListener(listener1);
+		mRgline2 = (RadioGroup)innerView.findViewById(R.id.color_radio2);
+		mRgline2.clearCheck();
+		mRgline2.setOnCheckedChangeListener(listener2);
 
 		final EditText input = (EditText) innerView.findViewById(R.id.Messagebox_edit);
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
-		RadioGroup Colgroup = (RadioGroup) findViewById(R.id.color_radio);
-//		Colgroup.setOnCheckedChangeListener(mRadioCheck);
 
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +233,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				String value = input.getText().toString();
 				if (value.equals("")) {
 					Toast.makeText(getApplicationContext(), "공백입니다.", Toast.LENGTH_SHORT).show();//					mCustomDialog.dismiss();
-				} else {
+				}
+				else {
 					categoryItems.add("# " + value);
 					categoryListAdapter.notifyDataSetChanged();
 					dbHelper.newInsert("제목 없음", "# " + value);
@@ -189,7 +244,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 					DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 					drawer.closeDrawer(GravityCompat.START);
-
+					System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
+					if(radiocheckId == R.id.first_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFF));
+					if(radiocheckId == R.id.second_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0xe9a99a));
+					if(radiocheckId == R.id.third_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0x87b14b));
+					if(radiocheckId == R.id.fourth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0x6b7fb9));
+					if(radiocheckId == R.id.fifth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0xb16d51));
+					if(radiocheckId == R.id.sixth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0x5587a1));
+					if(radiocheckId == R.id.seventh_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0xd2407));
+					if(radiocheckId == R.id.eight_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(0xebc851));
 					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 				}
 			}
@@ -205,32 +276,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		return ab.create();
 	}
-
-	RadioGroup.OnCheckedChangeListener mRadioCheck =
-					new RadioGroup.OnCheckedChangeListener() {
-						public void onCheckedChanged(RadioGroup group, int checkedId) {
-							if (group.getId() == R.id.color_radio) {
-								switch (checkedId) {
-									case R.id.first_col:
-										break;
-									case R.id.second_col:
-										break;
-									case R.id.third_col:
-										break;
-									case R.id.fourth_col:
-										break;
-									case R.id.fifth_col:
-										break;
-									case R.id.sixth_col:
-										break;
-									case R.id.seventh_col:
-										break;
-									case R.id.eight_col:
-										break;
-								}
-							}
-						}
-					};
 
 	private void setDismiss(Dialog dialog) {
 		if (dialog != null && dialog.isShowing())
