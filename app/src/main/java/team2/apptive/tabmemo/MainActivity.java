@@ -3,6 +3,7 @@ package team2.apptive.tabmemo;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-    toolbar.setBackground(new ColorDrawable(0xead233));
 
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -126,19 +126,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-//    categoryListView.setOnLongClickListener(new AdapterView.OnItemLongClickListener(){
-//      @Override
-//      public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//            mMainDialog = createDialog();
-//            WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
-//            wm.copyFrom(mMainDialog.getWindow().getAttributes());
-//            wm.height = 225;
-//            wm.width = 255;
-//            mMainDialog.getWindow().setGravity(Gravity.TOP);
-//            mMainDialog.show();
-//        }
-//    });
-
+    categoryListView.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				mMainDialog = createDialog();
+				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+				wm.copyFrom(mMainDialog.getWindow().getAttributes());
+				wm.height = 225;
+				wm.width = 255;
+				mMainDialog.getWindow().setGravity(Gravity.TOP);
+				mMainDialog.show();
+				return false;
+			}
+		});
 		// ( 수정 필요 !!!)
 		// Category All Memo Button Click Event
 		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-		// (수정필요 !!!)
+		// 미분류 버튼 클릭 이벤트
 		Button btCategoryUnSorted = (Button) findViewById(R.id.btCategoryUnSorted);
 		btCategoryUnSorted.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -210,9 +210,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 	private AlertDialog createDialog() {
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
-    final View innerView2 = getLayoutInflater().inflate(R.layout.activity_main, null);
 		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
+		final ActionBar actionBar = getSupportActionBar();
 		mMainDialog = ab.create();
 
 		mRgline1 = (RadioGroup)innerView.findViewById(R.id.color_radio);
@@ -225,9 +225,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final EditText input = (EditText) innerView.findViewById(R.id.Messagebox_edit);
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
-
-    final Toolbar toolbar = (Toolbar) innerView2.findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
 
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
@@ -247,23 +244,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 					DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 					drawer.closeDrawer(GravityCompat.START);
-//					System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
-//					if(radiocheckId == R.id.first_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xFFFF));
-//					if(radiocheckId == R.id.second_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xe9a99a));
-//					if(radiocheckId == R.id.third_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x87b14b));
-//					if(radiocheckId == R.id.fourth_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x6b7fb9));
-//					if(radiocheckId == R.id.fifth_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xb16d51));
-//					if(radiocheckId == R.id.sixth_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x5587a1));
-//					if(radiocheckId == R.id.seventh_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xd2407));
-//					if(radiocheckId == R.id.eight_col)
-//            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xebc851));
+					System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
+					if(radiocheckId == R.id.first_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
+					if(radiocheckId == R.id.second_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#e9a99a")));
+					if(radiocheckId == R.id.third_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#87b14b")));
+					if(radiocheckId == R.id.fourth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#6b7fb9")));
+					if(radiocheckId == R.id.fifth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b16d51")));
+					if(radiocheckId == R.id.sixth_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5587a1")));
+					if(radiocheckId == R.id.seventh_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d24078")));
+					if(radiocheckId == R.id.eight_col)
+						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ebc851")));
 					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 				}
 			}

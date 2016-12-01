@@ -194,13 +194,10 @@ public class ListFragment extends Fragment {
 				citem.memo = cursor.getString(2); // give child item a memo
 				citem.id = item.id; // give child item a same id
 
-
 				item.cItems.add(citem); // connect with item and citem
 
 				items.add(item); // inserting to array
 			}
-
-
 		}
 
 	}
