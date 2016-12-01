@@ -2,12 +2,10 @@ package team2.apptive.tabmemo;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -56,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
-	private SharedPreferences sharedPreferences = null;
-	final private String prefName = "Category";
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,8 +114,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//    drawer.setDrawerListener(toggle);
-    toggle.syncState();
+		//drawer.setDrawerListener(toggle);
+    toggle.getDrawerArrowDrawable();
+
+
+		// NavigationView
+//		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//		navigationView.setNavigationItemSelectedListener(this);
 
 		// Button (add new memo)
 		Button bt_addNewMemo = (Button) findViewById(R.id.bt_add_new_memo);
@@ -134,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// Make category List items from db
 		makeItemsForCategoryList(categoryItems);
+		categoryListView.setOnItemLongClickListener(new ListViewItemLongClickListener());
+
 
 		// category list item click event
 		categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -148,21 +151,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-    categoryListView.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				mMainDialog = createDialog();
-				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
-				wm.copyFrom(mMainDialog.getWindow().getAttributes());
-				wm.height = 225;
-				wm.width = 255;
-				mMainDialog.getWindow().setGravity(Gravity.TOP);
-				mMainDialog.show();
-				return false;
-			}
-		});
-
-		// Category All Memo Button Click Event
 		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
 		btCategoryAll.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -190,6 +178,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
+	}
+
+	class ListViewItemLongClickListener implements  AdapterView.OnItemLongClickListener{
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+		{
+      titled = categoryItems.get(position).substring(2);
+      modify = true;
+      category_position = position;
+			mMainDialog = createDialog();
+			WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+			wm.copyFrom(mMainDialog.getWindow().getAttributes());
+			wm.height = 225;
+			wm.width = 255;
+			mMainDialog.getWindow().setGravity(Gravity.TOP);
+			mMainDialog.show();
+			return false;
+		}
 	}
 
 	private RadioGroup.OnCheckedChangeListener listener1 = new RadioGroup.OnCheckedChangeListener() {
@@ -223,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
+        make = true;
 				mMainDialog = createDialog();
 				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
 				wm.copyFrom(mMainDialog.getWindow().getAttributes());
@@ -238,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
 		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
+		final ActionBar actionBar = getSupportActionBar();
 		mMainDialog = ab.create();
 
 		mRgline1 = (RadioGroup)innerView.findViewById(R.id.color_radio);
@@ -251,6 +259,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
 
+    input.setText(input.getText().toString().equals("제목 없음") ?
+      "" : titled);
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -307,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 					refreshToolbarColor();
 					refreshBackgroundColor();
+					make = false;
 				}
 			}
 
@@ -314,25 +325,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				int count, checked ;
-				count = categoryListAdapter.getCount() ;
-
-				if (count > 0) {
-					// 현재 선택된 아이템의 position 획득.
-					checked = categoryListView.getCheckedItemPosition();
-
-					if (checked > -1 && checked < count) {
-						// 아이템 삭제
-						categoryListView.removeViewAt(checked);
-
-						// listview 선택 초기화.
-						categoryListView.clearChoices();
-
-						// listview 갱신.
-						categoryListAdapter.notifyDataSetChanged();
-					}
-				}
+        public void onClick(View v) {
+				categoryItems.remove(category_position);
+        categoryListAdapter.notifyDataSetChanged();
+				setDismiss(mMainDialog);
 			}
 		});
 
@@ -368,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
+    System.out.println("navigation view");
 		return true;
 	}
 
