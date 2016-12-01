@@ -47,15 +47,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private Button addButton = null;
 	ListView categoryListView;
 	ArrayList<String> categoryItems = new ArrayList<>();
-	ArrayList<String> color_buttons = new ArrayList<>();
 	private RadioGroup mRgline1;
 	private RadioGroup mRgline2;
 	int radiocheckId;
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
-	private int position = 0;
-	private long id;
+	private int category_position;
+	private String titled;
+  boolean modify = false;
+  boolean make = false;
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//		drawer.setDrawerListener(toggle);
-    toggle.syncState();
+		//drawer.setDrawerListener(toggle);
+    toggle.getDrawerArrowDrawable();
 
 
 		// NavigationView
@@ -115,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// Make category List items from db
 		makeItemsForCategoryList(categoryItems);
+		categoryListView.setOnItemLongClickListener(new ListViewItemLongClickListener());
+
 
 		// category list item click event
 		categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -127,21 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-    categoryListView.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				mMainDialog = createDialog();
-				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
-				wm.copyFrom(mMainDialog.getWindow().getAttributes());
-				wm.height = 225;
-				wm.width = 255;
-				mMainDialog.getWindow().setGravity(Gravity.TOP);
-				mMainDialog.show();
-				return false;
-			}
-		});
-		// ( 수정 필요 !!!)
-		// Category All Memo Button Click Event
 		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
 		btCategoryAll.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -165,6 +153,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
+	}
+
+	class ListViewItemLongClickListener implements  AdapterView.OnItemLongClickListener{
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+		{
+      titled = categoryItems.get(position).substring(2);
+      modify = true;
+      category_position = position;
+			mMainDialog = createDialog();
+			WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+			wm.copyFrom(mMainDialog.getWindow().getAttributes());
+			wm.height = 225;
+			wm.width = 255;
+			mMainDialog.getWindow().setGravity(Gravity.TOP);
+			mMainDialog.show();
+			return false;
+		}
 	}
 
 	private RadioGroup.OnCheckedChangeListener listener1 = new RadioGroup.OnCheckedChangeListener() {
@@ -198,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
+        make = true;
 				mMainDialog = createDialog();
 				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
 				wm.copyFrom(mMainDialog.getWindow().getAttributes());
@@ -227,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
 
+    input.setText(input.getText().toString().equals("제목 없음") ?
+      "" : titled);
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -235,7 +244,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				if (value.equals("")) {
 					Toast.makeText(getApplicationContext(), "공백입니다.", Toast.LENGTH_SHORT).show();//					mCustomDialog.dismiss();
 				}
-				else {
+        else if (modify == true){
+          categoryItems.set(category_position,"# " + value);
+          categoryListAdapter.notifyDataSetChanged();
+          setDismiss(mMainDialog);
+          setCurrentCategory("# " + value);
+          refreshToolbarCategoryTitle();
+
+          DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+          drawer.closeDrawer(GravityCompat.START);
+          System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
+          if(radiocheckId == R.id.first_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
+          if(radiocheckId == R.id.second_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#e9a99a")));
+          if(radiocheckId == R.id.third_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#87b14b")));
+          if(radiocheckId == R.id.fourth_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#6b7fb9")));
+          if(radiocheckId == R.id.fifth_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b16d51")));
+          if(radiocheckId == R.id.sixth_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5587a1")));
+          if(radiocheckId == R.id.seventh_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d24078")));
+          if(radiocheckId == R.id.eight_col)
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ebc851")));
+          showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+          modify = false;
+        }
+				else if (make == true){
 					categoryItems.add("# " + value);
 					categoryListAdapter.notifyDataSetChanged();
 					dbHelper.newInsert("제목 없음", "# " + value);
@@ -263,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					if(radiocheckId == R.id.eight_col)
 						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ebc851")));
 						showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+          make = false;
 				}
 			}
 
@@ -270,25 +309,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				int count, checked ;
-				count = categoryListAdapter.getCount() ;
-
-				if (count > 0) {
-					// 현재 선택된 아이템의 position 획득.
-					checked = categoryListView.getCheckedItemPosition();
-
-					if (checked > -1 && checked < count) {
-						// 아이템 삭제
-						categoryListView.removeViewAt(checked);
-
-						// listview 선택 초기화.
-						categoryListView.clearChoices();
-
-						// listview 갱신.
-						categoryListAdapter.notifyDataSetChanged();
-					}
-				}
+        public void onClick(View v) {
+				categoryItems.remove(category_position);
+        categoryListAdapter.notifyDataSetChanged();
+				setDismiss(mMainDialog);
 			}
 		});
 
@@ -324,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
+    System.out.println("navigation view");
 		return true;
 	}
 
