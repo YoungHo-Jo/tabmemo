@@ -11,7 +11,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout;//
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
-
+	private int position = 0;
+	private long id;
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//    drawer.setDrawerListener(toggle);
+//		drawer.setDrawerListener(toggle);
     toggle.syncState();
 
 
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d24078")));
 					if(radiocheckId == R.id.eight_col)
 						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ebc851")));
-					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+						showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 				}
 			}
 
@@ -270,7 +271,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setDismiss(mMainDialog);
+				int count, checked ;
+				count = categoryListAdapter.getCount() ;
+
+				if (count > 0) {
+					// 현재 선택된 아이템의 position 획득.
+					checked = categoryListView.getCheckedItemPosition();
+
+					if (checked > -1 && checked < count) {
+						// 아이템 삭제
+						categoryListView.removeViewAt(checked);
+
+						// listview 선택 초기화.
+						categoryListView.clearChoices();
+
+						// listview 갱신.
+						categoryListAdapter.notifyDataSetChanged();
+					}
+				}
 			}
 		});
 
