@@ -15,6 +15,7 @@ public class ExpandableItem {
 		String title;
 		ArrayList<ChildItem> cItems = new ArrayList<ChildItem>();
 		String id;
+		String categoryColor;
 	}
 
 	public static class ChildItem {

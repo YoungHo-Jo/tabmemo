@@ -7,9 +7,10 @@
 							android:orientation="horizontal">
 
 	<LinearLayout
+			android:id="@+id/listItemCategoryColor"
 			android:layout_width="12dp"
 			android:layout_height="match_parent"
-			android:background="#ff0000"></LinearLayout>
+			android:background="#FFFFFF"></LinearLayout>
 
 	<LinearLayout
 			android:layout_width="match_parent"

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -72,14 +73,23 @@ public class ListFragment extends Fragment {
 		// for our ExpandableListView.
 		listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
-			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+			public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
 				isLongClicked = false;
+
 				listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
-					public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
+					public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
 						TextView titleView = (TextView) view.findViewById(R.id.tv_title);
-						System.out.println("group item is long clicked! " + titleView.getText());
+
+						if(titleView == null)
+						{
+							View inflatedTitleView = inflater.inflate(R.layout.list_item, null);
+							titleView = (TextView) inflatedTitleView.findViewById(R.id.tv_title);
+						}
+
+						System.out.println("group item is long clicked! " + titleView.getText() + " " + position);
+
 
 
 						// 타이틀 수정 기능 필요
@@ -91,7 +101,7 @@ public class ListFragment extends Fragment {
 
 						final EditText etMemoTitle = (EditText) modifyingMemoTitleView.findViewById(R.id.et_modifyingMemoTitle);
 						etMemoTitle.setText(titleView.getText().toString().equals("제목 없음") ?
-							"" : titleView.getText().toString());
+										"" : titleView.getText().toString());
 
 						Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
 						Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
@@ -101,10 +111,12 @@ public class ListFragment extends Fragment {
 							public void onClick(View v) {
 								System.out.println("btConfirmTitle Clicked!");
 								String newTitle = etMemoTitle.getText().toString();
-								String titleId = items.get(position).id;
+								if (newTitle.equals(""))
+									newTitle = "제목 없음";
+								String titleId = items.get(groupPosition).id;
 
 								dbHelper.updateTitle(newTitle, titleId);
-								items.get(position).title = newTitle;
+								items.get(groupPosition).title = newTitle;
 								memoTitleDialog.dismiss();
 							}
 						});
@@ -112,9 +124,9 @@ public class ListFragment extends Fragment {
 						btDeleteMemo.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								System.out.println("btDeleteMemo Clicked!");
-								dbHelper.deleteByTime(items.get(position).id);
-								items.remove(position);
+								System.out.println("btDeleteMemo Clicked! " + groupPosition);
+								dbHelper.deleteByTime(items.get(groupPosition).id);
+								items.remove(groupPosition);
 								adapter.notifyDataSetChanged();
 								memoTitleDialog.dismiss();
 							}
@@ -127,7 +139,6 @@ public class ListFragment extends Fragment {
 						return true;
 					}
 				});
-
 
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
@@ -150,6 +161,8 @@ public class ListFragment extends Fragment {
 			}
 		});
 
+
+
 		// new memo will be expanded and have a cursor on it
 		if (isAddedNewMemo) {
 			listView.expandGroupWithAnimation(0);
@@ -166,14 +179,15 @@ public class ListFragment extends Fragment {
 		ExpandableItem.GroupItem item;
 		ExpandableItem.ChildItem citem;
 		Cursor cursor;
+		SharedPreferences pref = getActivity().getSharedPreferences("Category", 0);
 
 		// from db, inserting to group item and child item
 		// 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
 		// 현재 시간 내림차순으로 정렬해서 출력한다.
 		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
-		if(category.equals("전체 메모"))
+		if (category.equals("전체 메모"))
 			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO order by time desc", null);
-		else if(category.equals("미분류"))
+		else if (category.equals("미분류"))
 			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '전체 메모' order by time desc", null);
 		else
 			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
@@ -190,6 +204,7 @@ public class ListFragment extends Fragment {
 			if (cursor.getString(2) != null) {
 				item.id = id; // give item an id
 				item.title = cursor.getString(1); // give item a memo
+				item.categoryColor = pref.getString(cursor.getString(4), "#FFFFFF");
 
 				citem.memo = cursor.getString(2); // give child item a memo
 				citem.id = item.id; // give child item a same id

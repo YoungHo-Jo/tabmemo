@@ -105,6 +105,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 
+	public void deleteCategory(String _category)
+	{
+		SQLiteDatabase db = getWritableDatabase();
+		db.execSQL("delete from MEMO where category = '" + _category + "';");
+		db.close();
+	}
+
 	public String printData() {
 		SQLiteDatabase db = getReadableDatabase();
 		String str = "";

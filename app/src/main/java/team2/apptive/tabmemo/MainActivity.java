@@ -2,10 +2,12 @@ package team2.apptive.tabmemo;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -54,16 +56,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
+	private SharedPreferences sharedPreferences = null;
+	final private String prefName = "Category";
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setTitle("");
+		sharedPreferences = getSharedPreferences(prefName, 0);
+		if(sharedPreferences.getBoolean("First", true))
+		{
+			addCategoryColorInPref("전체 메모", "#afafaf");
+			addCategoryColorInPref("미분류", "#afafaf");
+		}
+		else
+		{
+			setCurrentCategory(getLastCategory());
+		}
+		sharedPreferences.edit().putBoolean("First", false).apply();
 
 		// font
-		Typekit.getInstance()
-						.addNormal(Typekit.createFromAsset(this, "fonts/Spoqa_Han_Sans_Regular_win_subset.ttf"));
+//		Typekit.getInstance()
+//						.addNormal(Typekit.createFromAsset(this, "fonts/Spoqa_Han_Sans_Regular_win_subset.ttf"));
 
 		// toolbar category title
 		tvToolbarCategoryTitle = (TextView) findViewById(R.id.tv_toolbar_category_title);
@@ -90,16 +105,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		// refresh toolbar color
+		refreshToolbarColor();
+
+		// refresh toolbar title
+		refreshToolbarCategoryTitle();
+
+		// refresh background color
+		refreshBackgroundColor();
+
+
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //    drawer.setDrawerListener(toggle);
     toggle.syncState();
-
-
-		// NavigationView
-//		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//		navigationView.setNavigationItemSelectedListener(this);
 
 		// Button (add new memo)
 		Button bt_addNewMemo = (Button) findViewById(R.id.bt_add_new_memo);
@@ -122,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				setCurrentCategory(categoryItems.get(position));
 				makeListFragmentByCategory();
 				refreshToolbarCategoryTitle();
+				refreshToolbarColor();
+				refreshBackgroundColor();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -139,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				return false;
 			}
 		});
-		// ( 수정 필요 !!!)
+
 		// Category All Memo Button Click Event
 		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
 		btCategoryAll.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				setCurrentCategory("전체 메모");
 				makeListFragmentByCategory();
 				refreshToolbarCategoryTitle();
+				refreshToolbarColor();
+				refreshBackgroundColor();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -160,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				setCurrentCategory("미분류");
 				makeListFragmentByCategory();
 				refreshToolbarCategoryTitle();
+				refreshToolbarColor();
+				refreshBackgroundColor();
 				drawer.closeDrawer(GravityCompat.START);
 			}
 		});
@@ -212,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
 		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
-		final ActionBar actionBar = getSupportActionBar();
 		mMainDialog = ab.create();
 
 		mRgline1 = (RadioGroup)innerView.findViewById(R.id.color_radio);
@@ -232,36 +257,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			public void onClick(View v) {
 				String value = input.getText().toString();
 				if (value.equals("")) {
-					Toast.makeText(getApplicationContext(), "공백입니다.", Toast.LENGTH_SHORT).show();//					mCustomDialog.dismiss();
+					Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
 				}
 				else {
-					categoryItems.add("# " + value);
+					String newCategoryName = "# " + value;
+					categoryItems.add(newCategoryName);
 					categoryListAdapter.notifyDataSetChanged();
-					dbHelper.newInsert("제목 없음", "# " + value);
+					dbHelper.newInsert("제목없음", newCategoryName);
 					setDismiss(mMainDialog);
-					setCurrentCategory("# " + value);
+					setCurrentCategory(newCategoryName);
 					refreshToolbarCategoryTitle();
 
 					DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 					drawer.closeDrawer(GravityCompat.START);
-					System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
-					if(radiocheckId == R.id.first_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
-					if(radiocheckId == R.id.second_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#e9a99a")));
-					if(radiocheckId == R.id.third_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#87b14b")));
-					if(radiocheckId == R.id.fourth_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#6b7fb9")));
-					if(radiocheckId == R.id.fifth_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b16d51")));
-					if(radiocheckId == R.id.sixth_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5587a1")));
-					if(radiocheckId == R.id.seventh_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d24078")));
-					if(radiocheckId == R.id.eight_col)
-						actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ebc851")));
+
+					String categoryColor = "";
+					switch(radiocheckId)
+					{
+						case R.id.first_col:
+							categoryColor = "#FFFFFF";
+							break;
+						case R.id.second_col:
+							categoryColor = "#E9A99A";
+							break;
+						case R.id.third_col:
+							categoryColor = "#87b14b";
+							break;
+						case R.id.fourth_col:
+							categoryColor = "#6b7fb9";
+							break;
+						case R.id.fifth_col:
+							categoryColor = "#b16d51";
+							break;
+						case R.id.sixth_col:
+							categoryColor = "#5587a1";
+							break;
+						case R.id.seventh_col:
+							categoryColor = "#d24078";
+							break;
+						case R.id.eight_col:
+							categoryColor = "#ebc851";
+							break;
+						default:
+							categoryColor = "#FFFFFF";
+					}
+
+					addCategoryColorInPref(newCategoryName, categoryColor);
+
 					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+					refreshToolbarColor();
+					refreshBackgroundColor();
 				}
 			}
 
@@ -270,7 +315,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setDismiss(mMainDialog);
+				int count, checked ;
+				count = categoryListAdapter.getCount() ;
+
+				if (count > 0) {
+					// 현재 선택된 아이템의 position 획득.
+					checked = categoryListView.getCheckedItemPosition();
+
+					if (checked > -1 && checked < count) {
+						// 아이템 삭제
+						categoryListView.removeViewAt(checked);
+
+						// listview 선택 초기화.
+						categoryListView.clearChoices();
+
+						// listview 갱신.
+						categoryListAdapter.notifyDataSetChanged();
+					}
+				}
 			}
 		});
 
@@ -295,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// ((ListFragment) listFragment).addNewTitleMemo("No Title", "");
 		// new listFragment --> memory ???
 
-		dbHelper.newInsert("제목 없음", currentCategory.equals("미분류") ? "전체 메모" : currentCategory);
+		dbHelper.newInsert("제목없음", currentCategory.equals("미분류") ? "전체 메모" : currentCategory);
 		showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 	}
 
@@ -358,11 +420,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		System.out.println("onResume!");
 	}
 
-	 // font
-	@Override
-	protected void attachBaseContext(Context newBase) {
-		super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
-	}
+//	 // font
+//	@Override
+//	protected void attachBaseContext(Context newBase) {
+//		super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
+//	}
 
 	public void setCurrentCategory(String _category)
 	{
@@ -379,4 +441,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		tvToolbarCategoryTitle.setText(currentCategory);
 	}
 
+
+	public void refreshToolbarColor()
+	{
+		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getCategoryColorInPref(currentCategory))));
+	}
+
+	public void refreshBackgroundColor()
+	{
+		CoordinatorLayout coord = (CoordinatorLayout) findViewById(R.id.coorLayoutMain);
+		coord.setBackground(new ColorDrawable(Color.parseColor(getCategoryColorInPref(currentCategory))));
+	}
+
+	public String getCategoryColorInPref(String _category)
+	{
+		return sharedPreferences.getString(_category, null);
+	}
+
+	public void addCategoryColorInPref(String _category, String _color)
+	{
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(_category, _color);
+		editor.apply();
+	}
+
+	public void removeCategoryInPref(String _category)
+	{
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.remove(_category);
+		editor.apply();
+	}
+
+	public void updateLastViewCategory(String _category)
+	{
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("LastCategory", _category);
+		editor.apply();
+	}
+
+	public String getLastCategory()
+	{
+		return sharedPreferences.getString("LastCategory", null);
+	}
+
+	@Override
+	protected void onStop() {
+		updateLastViewCategory(currentCategory);
+		super.onStop();
+	}
 }

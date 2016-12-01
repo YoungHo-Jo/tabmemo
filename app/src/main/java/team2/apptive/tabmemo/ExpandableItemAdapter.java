@@ -3,12 +3,15 @@ package team2.apptive.tabmemo;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,6 +36,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		inflater = LayoutInflater.from(context);
 		mContext = context;
 	}
+
 
 	public void setData(List<ExpandableItem.GroupItem> items) {
 		this.items = items;
@@ -212,6 +216,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 
 		holder.title.setText(item.title);
+		LinearLayout colorPostion = (LinearLayout) convertView.findViewById(R.id.listItemCategoryColor);
+		colorPostion.setBackground(new ColorDrawable(Color.parseColor(item.categoryColor)));
 
 		// System.out.println("getGroupView!!");
 
@@ -241,7 +247,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 	@Override
 	public void notifyDataSetChanged() {
-		System.out.println("notifydataSetChagned!!");
+		System.out.println("notifydataSetChanged!!");
 		for (int i = 0; i < items.size(); i++) {
 			if(isNewMemo)
 				continue;
@@ -252,4 +258,5 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 		super.notifyDataSetChanged();
 	}
+
 }
