@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		dbHelper.deleteNullMemo(); // db 정리
 
 		categoryListView.setAdapter(categoryListAdapter);
+    categoryListView.setMinimumHeight(20);
 
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 		// drawer.setDrawerListener(toggle);
-    toggle.getDrawerArrowDrawable();
+    toggle.syncState();
 
 
 		// NavigationView

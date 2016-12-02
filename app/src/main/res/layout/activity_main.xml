@@ -68,6 +68,9 @@
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_weight="80.5"
+                        android:divider="@null"
+                        android:dividerHeight="0dp"
+                        android:overScrollMode="never"
 						android:background="#F2F2F2">
 				</ListView>
 
@@ -80,8 +83,10 @@
 						android:id="@+id/navigation_button"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
+                        android:text="add"
+                        android:textColor="#3b428b"
 						android:layout_weight="7.5"
-						android:background="#dd00ffe1"
+						android:background="#ddffffff"
 						android:onClick="onClickView"/>
 			</LinearLayout>
 		</android.support.design.widget.NavigationView>
@@ -108,12 +113,12 @@
 			<Button
 					android:id="@+id/bt_add_new_memo"
 					android:layout_width="50dp"
-					android:layout_height="match_parent"
+					android:layout_height="50dp"
 					android:layout_gravity="end|center"
-					android:background="@drawable/button_add_new_memo"
+					android:background="@drawable/edit"
 
 					android:scaleX="0.4"
-					android:scaleY="0.35"/>
+					android:scaleY="0.25"/>
 
 
 			<TextView
