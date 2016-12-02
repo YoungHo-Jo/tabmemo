@@ -109,7 +109,12 @@
 					android:id="@+id/bt_add_new_memo"
 					android:layout_width="50dp"
 					android:layout_height="match_parent"
-					android:layout_gravity="end|center"/>
+					android:layout_gravity="end|center"
+					android:background="@drawable/button_add_new_memo"
+
+					android:scaleX="0.4"
+					android:scaleY="0.35"/>
+
 
 			<TextView
 					android:id="@+id/tv_toolbar_category_title"

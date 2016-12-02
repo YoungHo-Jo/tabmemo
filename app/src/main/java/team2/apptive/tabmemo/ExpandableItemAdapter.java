@@ -6,11 +6,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +32,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private LayoutInflater inflater;
 	private List<ExpandableItem.GroupItem> items;
 	private ExpandableItem.ChildHolder holder;
+	private EditableTextView edittingTextView;
 	private DBHelper dbHelper;
 	private boolean isNewMemo = false;
 	private Context mContext;
@@ -53,7 +59,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	}
 
 	@Override
-	public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getRealChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
 		final ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
 
@@ -75,56 +81,11 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			public void onClick(View v) {
 				final EditableTextView editView = (EditableTextView) v;
 				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
-				editView.setEditMode(true); // editable memo
+				// editView.setEditMode(true); // editable memo
 				editView.requestFocus(); // focusing on memo
-
-
-//				editView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//					@Override
-//					public void onFocusChange(View v, boolean hasFocus) {
-//						System.out.println("holder.memo.hasFocus changed: " + hasFocus);
-//						EditableTextView focusedEditView = (EditableTextView) v;
-//						dbHelper = new DBHelper(focusedEditView.getContext(), "Memo.db", null, 1);
-//						InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE); // for keyboard
-//
-//						if (hasFocus) {
-//
-//						} else {
-//							// Store Memo
-//							((EditableTextView)v).setEditMode(false);
-//							System.out.println("EditMode is false --> Save memo!!");
-//							focusedEditView.getText().toString()
-//							dbHelper.updateMemo(focusedEditView.getText().toString(), item.id);
-//							// Remove Keyboard
-//							inputMethodManager.hideSoftInputFromWindow(editView.getWindowToken(), 0);
-//						}
-//					}
-//				});
-
-//
-//				editView.addTextChangedListener(new TextWatcher() {
-//					@Override
-//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//					}
-//
-//					@Override
-//					public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//					}
-//
-//					@Override
-//					public void afterTextChanged(Editable s) {
-//						if (editView.isEditMode() && editView.isFocused()) {
-//							System.out.println("EditMode is false --> Save memo!!");
-//							item.memo = editView.getText().toString();
-//							dbHelper = new DBHelper(editView.getContext(), "Memo.db", null, 1);
-//							dbHelper.updateMemo(item.memo, item.id);
-//						}
-//					}
-//				});
 			}
 		});
+
 		final ExpandableItemAdapter eia = this;
 		holder.memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
@@ -135,8 +96,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE); // for keyboard
 				if (hasFocus) {
 					focusedEditView.setEditMode(true);
+					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 
-				//	inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 				} else {
 					// Store Memo
 					((EditableTextView) v).setEditMode(false);
@@ -154,8 +115,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				}
 			}
 		});
-
-
 
 
 		// (개선필요) 한 곳에서 쭉 적다가, 리스트뷰를 내리거나 올려서 수정하던 메모가 destroy 되면 저장이 되지 않는 문제 발생
@@ -257,6 +216,11 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			}
 		}
 		super.notifyDataSetChanged();
+	}
+
+	public EditableTextView getEdittingListView()
+	{
+		return edittingTextView;
 	}
 
 }

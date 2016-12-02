@@ -11,7 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Layout;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -76,70 +79,6 @@ public class ListFragment extends Fragment {
 			public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
 				isLongClicked = false;
 
-				listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-					@Override
-					public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-
-						TextView titleView = (TextView) view.findViewById(R.id.tv_title);
-
-						if(titleView == null)
-						{
-							View inflatedTitleView = inflater.inflate(R.layout.list_item, null);
-							titleView = (TextView) inflatedTitleView.findViewById(R.id.tv_title);
-						}
-
-						System.out.println("group item is long clicked! " + titleView.getText() + " " + position);
-
-
-
-						// 타이틀 수정 기능 필요
-						View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
-						AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
-						dialogBuilder.setView(modifyingMemoTitleView);
-
-						final Dialog memoTitleDialog = dialogBuilder.create();
-
-						final EditText etMemoTitle = (EditText) modifyingMemoTitleView.findViewById(R.id.et_modifyingMemoTitle);
-						etMemoTitle.setText(titleView.getText().toString().equals("제목 없음") ?
-										"" : titleView.getText().toString());
-
-						Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
-						Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
-
-						btConfirmTitle.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								System.out.println("btConfirmTitle Clicked!");
-								String newTitle = etMemoTitle.getText().toString();
-								if (newTitle.equals(""))
-									newTitle = "제목 없음";
-								String titleId = items.get(groupPosition).id;
-
-								dbHelper.updateTitle(newTitle, titleId);
-								items.get(groupPosition).title = newTitle;
-								memoTitleDialog.dismiss();
-							}
-						});
-
-						btDeleteMemo.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								System.out.println("btDeleteMemo Clicked! " + groupPosition);
-								dbHelper.deleteByTime(items.get(groupPosition).id);
-								items.remove(groupPosition);
-								adapter.notifyDataSetChanged();
-								memoTitleDialog.dismiss();
-							}
-						});
-
-						memoTitleDialog.show();
-						etMemoTitle.setSelection(etMemoTitle.length());
-
-						isLongClicked = true;
-						return true;
-					}
-				});
-
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
@@ -161,7 +100,93 @@ public class ListFragment extends Fragment {
 			}
 		});
 
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+				TextView titleView = (TextView) view.findViewById(R.id.tv_title);
+
+				if (titleView == null) {
+					// this is memo long clicked
+					// not title long clicked
+					View inflatedTitleView = inflater.inflate(R.layout.list_item, null);
+					titleView = (TextView) inflatedTitleView.findViewById(R.id.tv_title);
+					position--;
+				}
+
+				final int realGroupPosition = getRealGroupPosition(position);
+				System.out.println("group item is long clicked! " + titleView.getText() + " " + position + " GetRealPosition: " + realGroupPosition);
+
+				// 타이틀 수정 기능 필요
+				View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
+				AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
+				dialogBuilder.setView(modifyingMemoTitleView);
+
+				final Dialog memoTitleDialog = dialogBuilder.create();
+
+				final EditText etMemoTitle = (EditText) modifyingMemoTitleView.findViewById(R.id.et_modifyingMemoTitle);
+				etMemoTitle.setText(items.get(realGroupPosition).title.equals("제목없음") ?
+								"" : items.get(realGroupPosition).title);
+
+				Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
+				Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
+
+				btConfirmTitle.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						System.out.println("btConfirmTitle Clicked! " + realGroupPosition);
+						String newTitle = etMemoTitle.getText().toString();
+						if (newTitle.equals(""))
+							newTitle = "제목없음";
+						String titleId = items.get(realGroupPosition).id;
+
+						dbHelper.updateTitle(newTitle, titleId);
+						items.get(realGroupPosition).title = newTitle;
+						memoTitleDialog.dismiss();
+					}
+				});
+
+				btDeleteMemo.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						System.out.println("btDeleteMemo Clicked! " + realGroupPosition);
+						dbHelper.deleteByTime(items.get(realGroupPosition).id);
+						items.remove(realGroupPosition);
+						adapter.notifyDataSetChanged();
+						memoTitleDialog.dismiss();
+					}
+				});
+
+				memoTitleDialog.show();
+				etMemoTitle.setSelection(etMemoTitle.length());
+
+				isLongClicked = true;
+				return true;
+			}
+		});
+
+
+		listView.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				ExpandableItemAdapter exAdpater = (ExpandableItemAdapter) listView.getExpandableListAdapter();
+				EditableTextView currentEditView = exAdpater.getEdittingListView();
+				if (currentEditView!=null) {
+					System.out.println(currentEditView.getText());
+
+					Layout layout = currentEditView.getLayout();
+					System.out.println("event.getX(): " + event.getX() + " event.getY(): " + event.getY());
+					System.out.println("CurrentEditView: " + currentEditView.getScaleX() + " " + currentEditView.getScrollY());
+					if(event.getX() < currentEditView.getScrollX() || event.getY() < currentEditView.getScrollY());
+
+				}
+
+
+
+				listView.requestFocus();
+				return false;
+			}
+		});
 
 		// new memo will be expanded and have a cursor on it
 		if (isAddedNewMemo) {
@@ -204,7 +229,7 @@ public class ListFragment extends Fragment {
 			if (cursor.getString(2) != null) {
 				item.id = id; // give item an id
 				item.title = cursor.getString(1); // give item a memo
-				item.categoryColor = pref.getString(cursor.getString(4), "#FFFFFF");
+				item.categoryColor = cursor.getString(4).equals("전체 메모") ? "#FFFFFF" : pref.getString(cursor.getString(4), "#FFFFFF");
 
 				citem.memo = cursor.getString(2); // give child item a memo
 				citem.id = item.id; // give child item a same id
@@ -241,6 +266,22 @@ public class ListFragment extends Fragment {
 		isAddedNewMemo = _isAddedNewMemo;
 
 		return this;
+	}
+
+	public int getRealGroupPosition(int currentPosition) {
+		int innerCount = 0;
+		int realGroupPosition = 0;
+		for (int i = 0; i < adapter.getGroupCount(); i++) {
+			if (innerCount == currentPosition) {
+				realGroupPosition = i;
+				break;
+			}
+
+			innerCount++;
+			if (listView.isGroupExpanded(i))
+				innerCount++;
+		}
+		return realGroupPosition;
 	}
 }
 

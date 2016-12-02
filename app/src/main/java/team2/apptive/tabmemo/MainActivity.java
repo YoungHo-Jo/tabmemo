@@ -1,11 +1,12 @@
 package team2.apptive.tabmemo;
 
 import android.app.Dialog;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,10 +31,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tsengvn.typekit.Typekit;
-import com.tsengvn.typekit.TypekitContextWrapper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,14 +46,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private Button addButton = null;
 	ListView categoryListView;
 	ArrayList<String> categoryItems = new ArrayList<>();
-	ArrayList<String> color_buttons = new ArrayList<>();
 	private RadioGroup mRgline1;
 	private RadioGroup mRgline2;
 	int radiocheckId;
 	ArrayAdapter<String> categoryListAdapter;
 	private String currentCategory = "전체 메모";
 	private TextView tvToolbarCategoryTitle = null;
-
+	private SharedPreferences sharedPreferences;
+	private String prefName = "Category";
+	private int category_position;
+	private String titled;
+  boolean modify = false;
+  boolean make = false;
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,12 +87,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		categoryListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, categoryItems);
 		// listview fragment
+		listFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+
 		categoryListView.setAdapter(categoryListAdapter);
 		categoryListView.setPadding(5, 0, 0, 0);
 
-
-
-		listFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 
 		// Open DB
 		dbHelper = new DBHelper(getApplicationContext(), "Memo.db", null, 1);
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		//drawer.setDrawerListener(toggle);
+		// drawer.setDrawerListener(toggle);
     toggle.getDrawerArrowDrawable();
 
 
@@ -130,13 +132,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				onAddNewMemoClick();
 			}
 		});
+
 		// Button (add new category)
 		addButton = (Button) findViewById(R.id.navigation_button);
 
 		// Make category List items from db
 		makeItemsForCategoryList(categoryItems);
-		categoryListView.setOnItemLongClickListener(new ListViewItemLongClickListener());
 
+		categoryListView.setOnItemLongClickListener(new ListViewItemLongClickListener());
 
 		// category list item click event
 		categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -245,7 +248,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
 		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
-		final ActionBar actionBar = getSupportActionBar();
 		mMainDialog = ab.create();
 
 		mRgline1 = (RadioGroup)innerView.findViewById(R.id.color_radio);
@@ -259,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
 
-    input.setText(input.getText().toString().equals("제목 없음") ?
+    input.setText(input.getText().toString().equals("제목없음") ?
       "" : titled);
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +328,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
         public void onClick(View v) {
+				dbHelper.deleteCategory(categoryItems.get(category_position));
 				categoryItems.remove(category_position);
+				setCurrentCategory("전체 메모");
+				refreshBackgroundColor();
+				refreshToolbarColor();
+				refreshToolbarCategoryTitle();
+				showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
         categoryListAdapter.notifyDataSetChanged();
 				setDismiss(mMainDialog);
 			}
@@ -441,13 +449,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 	public void refreshToolbarColor()
 	{
-		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getCategoryColorInPref(currentCategory))));
+		String originalColor = getCategoryColorInPref(currentCategory);
+		String color = originalColor.equals("#FFFFFF") ? "#afafaf" : originalColor;
+		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
 	}
 
 	public void refreshBackgroundColor()
 	{
 		CoordinatorLayout coord = (CoordinatorLayout) findViewById(R.id.coorLayoutMain);
-		coord.setBackground(new ColorDrawable(Color.parseColor(getCategoryColorInPref(currentCategory))));
+
+		String originalColor = getCategoryColorInPref(currentCategory);
+		String color = originalColor.equals("#FFFFFF") ? "#afafaf" : originalColor;
+		coord.setBackground(new ColorDrawable(Color.parseColor(color)));
 	}
 
 	public String getCategoryColorInPref(String _category)
