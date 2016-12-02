@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		dbHelper.deleteNullMemo(); // db 정리
 
 		categoryListView.setAdapter(categoryListAdapter);
+    categoryListView.setMinimumHeight(20);
 
 		// toolbar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -192,10 +194,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
 		{
-      categoryTitle = categoryItems.get(position).substring(2);
+      titled = categoryItems.get(position).substring(2);
       modify = true;
       category_position = position;
-			mMainDialog = createDialog(view);
+			mMainDialog = createDialog();
+			WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+			wm.copyFrom(mMainDialog.getWindow().getAttributes());
+			mMainDialog.getWindow().setGravity(Gravity.TOP);
 			mMainDialog.show();
 			return false;
 		}
@@ -230,14 +235,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
-
+        make = true;
+				mMainDialog = createDialog();
+				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
+				wm.copyFrom(mMainDialog.getWindow().getAttributes());
+				mMainDialog.getWindow().setGravity(Gravity.TOP);
+				mMainDialog.show();
 				break;
 		}
 	}
 
-	private AlertDialog createDialog(View v) {
+	private AlertDialog createDialog() {
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
-		AlertDialog.Builder ab = new AlertDialog.Builder(v.getContext());
+		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
 		ab.setView(innerView);
 		mMainDialog = ab.create();
 
