@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +33,6 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	private SharedPreferences sharedPreferences;
 	private String prefName = "Category";
 	private int category_position;
-	private String titled;
+	private String categoryTitle;
   boolean modify = false;
-  boolean make = false;
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -116,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		// DrawerLayout
 		final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		// drawer.setDrawerListener(toggle);
-    toggle.getDrawerArrowDrawable();
+		//drawer.setDrawerListener(toggle);
+    toggle.syncState();
 
 
 		// NavigationView
@@ -135,6 +133,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 		// Button (add new category)
 		addButton = (Button) findViewById(R.id.navigation_button);
+		addButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mMainDialog = createDialog(v);
+				mMainDialog.show();
+			}
+		});
 
 		// Make category List items from db
 		makeItemsForCategoryList(categoryItems);
@@ -187,15 +192,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
 		{
-      titled = categoryItems.get(position).substring(2);
+      categoryTitle = categoryItems.get(position).substring(2);
       modify = true;
       category_position = position;
-			mMainDialog = createDialog();
-			WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
-			wm.copyFrom(mMainDialog.getWindow().getAttributes());
-			wm.height = 225;
-			wm.width = 255;
-			mMainDialog.getWindow().setGravity(Gravity.TOP);
+			mMainDialog = createDialog(view);
 			mMainDialog.show();
 			return false;
 		}
@@ -210,8 +210,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				mRgline2.clearCheck();
 				mRgline2.setOnCheckedChangeListener(listener2);
 				radiocheckId = checkedId;
-				System.out.println("!!!!!!!!!!!!!!!  "+radiocheckId);
-				System.out.println("!!!!!!!!!!!!!!!  "+checkedId);
 			}
 		}
 	};
@@ -232,21 +230,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onClickView(View v) {
 		switch (v.getId()) {
 			case R.id.navigation_button:
-        make = true;
-				mMainDialog = createDialog();
-				WindowManager.LayoutParams wm = new WindowManager.LayoutParams();
-				wm.copyFrom(mMainDialog.getWindow().getAttributes());
-				wm.height = 225;
-				wm.width = 255;
-				mMainDialog.getWindow().setGravity(Gravity.TOP);
-				mMainDialog.show();
+
 				break;
 		}
 	}
 
-	private AlertDialog createDialog() {
+	private AlertDialog createDialog(View v) {
 		final View innerView = getLayoutInflater().inflate(R.layout.category_add_message_box, null);
-		AlertDialog.Builder ab = new AlertDialog.Builder(innerView.getContext());
+		AlertDialog.Builder ab = new AlertDialog.Builder(v.getContext());
 		ab.setView(innerView);
 		mMainDialog = ab.create();
 
@@ -262,7 +253,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
 
     input.setText(input.getText().toString().equals("제목없음") ?
-      "" : titled);
+      "" : categoryTitle);
+		input.setSelection(input.length());
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -273,9 +265,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				}
 				else {
 					String newCategoryName = "# " + value;
-					categoryItems.add(newCategoryName);
+					if(modify)
+					{
+						categoryItems.set(category_position, newCategoryName);
+					}
+					else {
+						categoryItems.add(newCategoryName);
+						dbHelper.newInsert("제목없음", newCategoryName);
+					}
 					categoryListAdapter.notifyDataSetChanged();
-					dbHelper.newInsert("제목없음", newCategoryName);
 					setDismiss(mMainDialog);
 					setCurrentCategory(newCategoryName);
 					refreshToolbarCategoryTitle();
@@ -284,6 +282,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					drawer.closeDrawer(GravityCompat.START);
 
 					String categoryColor = "";
+					// RadioGroup upperRadioGroup = (RadioGroup) innerView.findViewById(R.id.color_radio);
+
+					// upperRadioGroup.check(R.id.first_col);
+
 					switch(radiocheckId)
 					{
 						case R.id.first_col:
@@ -316,10 +318,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 					addCategoryColorInPref(newCategoryName, categoryColor);
 
+
 					showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+					if(modify)
+						showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 					refreshToolbarColor();
 					refreshBackgroundColor();
-					make = false;
+					modify = false;
+					categoryTitle = "";
 				}
 			}
 

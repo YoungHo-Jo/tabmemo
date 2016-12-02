@@ -81,8 +81,8 @@
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_weight="7.5"
-						android:background="#dd00ffe1"
-						android:onClick="onClickView"/>
+						android:background="#dd00ffe1"/>
+						<!--android:onClick="onClickView"/>-->
 			</LinearLayout>
 		</android.support.design.widget.NavigationView>
 	</android.support.v4.widget.DrawerLayout>
@@ -122,7 +122,8 @@
 					android:layout_height="match_parent"
 					android:gravity="center"
 					android:text="-"
-					android:textSize="20dp"/>
+					android:textSize="20dp"
+					android:textColor="#FFFFFF"/>
 		</FrameLayout>
 
 	</android.support.design.widget.AppBarLayout>
