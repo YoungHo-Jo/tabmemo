@@ -19,13 +19,12 @@
 			android:paddingTop="10dp"
 			android:paddingLeft="20dp"
 			android:paddingRight="20dp"
-
 			android:textColor="#000000"
 			android:textSize="15dp"
-
 			app:editMode="false"
 			app:showButton="false"
 			android:focusableInTouchMode="true"
-			android:focusable="true"/>
-
+			android:focusable="true"
+			android:clickable="true"
+			/>
 </LinearLayout>

@@ -1,30 +1,23 @@
 package team2.apptive.tabmemo;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Layout;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -96,6 +89,15 @@ public class ListFragment extends Fragment {
 
 				listView.requestFocus();
 				System.out.println("onGroupClick!! " + groupPosition + " " + id + " focused?: " + listView.isFocused());
+
+				parent.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+					@Override
+					public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+						System.out.print("dd");
+						return false;
+					}
+				});
+
 				return true;
 			}
 		});
@@ -166,27 +168,28 @@ public class ListFragment extends Fragment {
 		});
 
 
-		listView.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				ExpandableItemAdapter exAdpater = (ExpandableItemAdapter) listView.getExpandableListAdapter();
-				EditableTextView currentEditView = exAdpater.getEdittingListView();
-				if (currentEditView!=null) {
-					System.out.println(currentEditView.getText());
 
-					Layout layout = currentEditView.getLayout();
-					System.out.println("event.getX(): " + event.getX() + " event.getY(): " + event.getY());
-					System.out.println("CurrentEditView: " + currentEditView.getScaleX() + " " + currentEditView.getScrollY());
-					if(event.getX() < currentEditView.getScrollX() || event.getY() < currentEditView.getScrollY());
-
-				}
-
-
-
-				listView.requestFocus();
-				return false;
-			}
-		});
+//		listView.setOnTouchListener(new View.OnTouchListener() {
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				ExpandableItemAdapter exAdpater = (ExpandableItemAdapter) listView.getExpandableListAdapter();
+//				EditableTextView currentEditView = exAdpater.getEdittingListView();
+//				if (currentEditView!=null) {
+//					System.out.println(currentEditView.getText());
+//
+//					Layout layout = currentEditView.getLayout();
+//					System.out.println("event.getX(): " + event.getX() + " event.getY(): " + event.getY());
+//					System.out.println("CurrentEditView: " + currentEditView.getScaleX() + " " + currentEditView.getScrollY());
+//					if(event.getX() < currentEditView.getScrollX() || event.getY() < currentEditView.getScrollY());
+//
+//				}
+//
+//
+//				// 아래를 활성화하면 listview drag 시 focus 되어 메모가 저장된다.
+//				// listView.requestFocus();
+//				return false;
+//			}
+//		});
 
 		// new memo will be expanded and have a cursor on it
 		if (isAddedNewMemo) {

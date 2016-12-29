@@ -10,6 +10,6 @@
     <string name="category_locked">잠금</string>
     <string name="memoTitle_deleteTitle">삭제</string>
     <string name="memoTitle_confirmModified">완료</string>
-    <string name="hint_categoryHint">카테고리 이름</string>
+    <string name="hint_categoryHint">카테고리이름</string>
     <string name="hint_memoTitle">제목없음</string>
 </resources>

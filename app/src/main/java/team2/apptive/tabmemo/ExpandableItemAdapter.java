@@ -1,22 +1,10 @@
 package team2.apptive.tabmemo;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.Layout;
-import android.text.TextWatcher;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -32,15 +20,13 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private LayoutInflater inflater;
 	private List<ExpandableItem.GroupItem> items;
 	private ExpandableItem.ChildHolder holder;
-	private EditableTextView edittingTextView;
 	private DBHelper dbHelper;
 	private boolean isNewMemo = false;
-	private Context mContext;
+
 
 	// Constructor
 	public ExpandableItemAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
-		mContext = context;
 	}
 
 
@@ -59,11 +45,11 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	}
 
 	@Override
-	public View getRealChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getRealChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
 		final ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
 
-		// System.out.println("getRealChildView GroupPostion: " + groupPosition + " chilPosition " + childPosition);
+		// System.out.println("getRealChildView GroupPosition: " + groupPosition + " childPosition " + childPosition);
 		if (convertView == null) {
 			holder = new ExpandableItem.ChildHolder();
 			convertView = inflater.inflate(R.layout.child_list_item, parent, false);
@@ -95,15 +81,18 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				dbHelper = new DBHelper(focusedEditView.getContext(), "Memo.db", null, 1);
 				InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE); // for keyboard
 				if (hasFocus) {
-					focusedEditView.setEditMode(true);
-					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 
+					// Set edit mode to true to write memo
+					focusedEditView.setEditMode(true);
+
+					// 키보드 열기
+					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 				} else {
 					// Store Memo
 					((EditableTextView) v).setEditMode(false);
 					isNewMemo = false;
 					System.out.println("EditMode is false --> Save memo!!");
-					item.memo = focusedEditView.getText().toString();
+					// item.memo = focusedEditView.getText().toString();
 					if (item.memo.equals("")) { // empty memo
 						System.out.println("Empty memo --> Delete memo!!");
 						dbHelper.updatMemoToNull(item.id);
@@ -112,10 +101,10 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 						dbHelper.updateMemo(focusedEditView.getText().toString(), item.id);
 					// Remove Keyboard
 					inputMethodManager.hideSoftInputFromWindow(focusedEditView.getWindowToken(), 0);
+
 				}
 			}
 		});
-
 
 		// (개선필요) 한 곳에서 쭉 적다가, 리스트뷰를 내리거나 올려서 수정하던 메모가 destroy 되면 저장이 되지 않는 문제 발생
 		// textwatcher를 통해서 실시간으로 저장을 하였으나, 다른 focused 메모 혹은 자식 메모간 혼란으로 인해 다른 메모에 같은 내용이 저장되는 등 버그가 다수 발견
@@ -175,11 +164,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 
 		holder.title.setText(item.title);
-		LinearLayout colorPostion = (LinearLayout) convertView.findViewById(R.id.listItemCategoryColor);
-		colorPostion.setBackground(new ColorDrawable(Color.parseColor(item.categoryColor)));
-
-		// System.out.println("getGroupView!!");
-
 
 		return convertView;
 	}
@@ -206,7 +190,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 	@Override
 	public void notifyDataSetChanged() {
-		System.out.println("notifydataSetChanged!!");
+		System.out.println("notifyDataSetChanged!!");
 		for (int i = 0; i < items.size(); i++) {
 			if(isNewMemo)
 				continue;
@@ -218,9 +202,5 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		super.notifyDataSetChanged();
 	}
 
-	public EditableTextView getEdittingListView()
-	{
-		return edittingTextView;
-	}
 
 }

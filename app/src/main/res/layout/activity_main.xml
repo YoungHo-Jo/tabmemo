@@ -3,12 +3,12 @@
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/coorLayoutMain"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:background="@color/colorPrimary"
 		android:fitsSystemWindows="true"
-		tools:context=".MainActivity"
-		android:id="@+id/coorLayoutMain">
+		tools:context=".MainActivity">
 
 	<android.support.v4.widget.DrawerLayout
 			android:id="@+id/drawer_layout"
@@ -29,7 +29,8 @@
 				android:id="@+id/nav_view"
 				android:layout_width="145dp"
 				android:layout_height="match_parent"
-				android:layout_gravity="start">
+				android:layout_gravity="start"
+				android:background="#F2F2F2">
 
 			<LinearLayout
 					android:layout_width="match_parent"
@@ -42,36 +43,42 @@
 						android:id="@+id/btCategoryAll"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-						android:layout_weight="6"
+						android:layout_weight="8"
 						android:background="#F2F2F2"
 						android:gravity="start|center"
 						android:paddingEnd="5dp"
 						android:paddingStart="5dp"
 						android:text="@string/category_all"
-						android:textSize="17dp"/>
+						android:textSize="17dp"
+						android:layout_marginTop="20dp"/>
 
 				<Button
 						android:id="@+id/btCategoryUnSorted"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
 						android:layout_gravity="bottom"
-						android:layout_weight="6"
+						android:layout_weight="8"
 						android:background="#F2F2F2"
 						android:gravity="start|center"
 						android:paddingEnd="5dp"
 						android:paddingStart="5dp"
 						android:text="@string/category_nonSorted"
-						android:textSize="17dp"/>
+						android:textSize="17dp"
+						android:layout_marginBottom="20dp"/>
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="#D9D9D9"/>
 
 				<ListView
 						android:id="@+id/navigation_list"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-						android:layout_weight="80.5"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:overScrollMode="never"
-						android:background="#F2F2F2">
+						android:layout_weight="76.5"
+						android:background="#F2F2F2"
+						android:divider="@null"
+						android:dividerHeight="0dp"
+						android:overScrollMode="never">
 				</ListView>
 
 				<View
@@ -83,11 +90,10 @@
 						android:id="@+id/navigation_button"
 						android:layout_width="match_parent"
 						android:layout_height="0dp"
-                        android:text="add"
-                        android:textColor="#3b428b"
 						android:layout_weight="7.5"
 						android:background="#ddffffff"
-						android:onClick="onClickView"/>
+						android:text="add"
+						android:textColor="#3b428b"/>
 			</LinearLayout>
 		</android.support.design.widget.NavigationView>
 	</android.support.v4.widget.DrawerLayout>
@@ -106,19 +112,18 @@
 					android:id="@+id/toolbar"
 					android:layout_width="match_parent"
 					android:layout_height="?attr/actionBarSize"
-					android:background="@android:color/black"
+					android:background="@color/colorPrimary"
 					android:theme="@style/Base.Widget.AppCompat.Toolbar"
 					app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
 			<Button
 					android:id="@+id/bt_add_new_memo"
 					android:layout_width="50dp"
-					android:layout_height="match_parent"
+					android:layout_height="50dp"
 					android:layout_gravity="end|center"
-					android:background="@drawable/button_add_new_memo"
 					android:background="@drawable/edit"
 					android:scaleX="0.4"
-					android:scaleY="0.25"/>
+					android:scaleY="0.4"/>
 
 
 			<TextView

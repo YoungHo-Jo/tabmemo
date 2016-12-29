@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="colorPrimary">#afafaf</color>
-	<color name="colorPrimaryDark">#919191</color>
+	<color name="colorPrimary">#FF81C1C2</color>
+	<color name="colorPrimaryDark">#FF81C1C2</color>
 	<color name="colorAccent">#afafaf</color>
 	<color name="colorSatusBar">#919191</color>
 </resources>

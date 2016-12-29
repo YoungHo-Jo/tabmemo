@@ -1,6 +1,5 @@
 package team2.apptive.tabmemo;
 
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
