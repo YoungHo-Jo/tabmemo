@@ -3,5 +3,5 @@
 	<color name="colorPrimary">#FF81C1C2</color>
 	<color name="colorPrimaryDark">#FF81C1C2</color>
 	<color name="colorAccent">#afafaf</color>
-	<color name="colorSatusBar">#919191</color>
+	<color name="colorSatusBar">#FF81C1C2</color>
 </resources>

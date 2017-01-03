@@ -478,4 +478,5 @@ public class AnimatedExpandableListView extends ExpandableListView {
 	public void setDividerHeight(int height) {
 		super.setDividerHeight(height);
 	}
+
 }

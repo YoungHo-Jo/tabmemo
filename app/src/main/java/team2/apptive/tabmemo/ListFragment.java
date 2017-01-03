@@ -1,23 +1,28 @@
 package team2.apptive.tabmemo;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Layout;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,8 +39,9 @@ public class ListFragment extends Fragment {
 	private View view;
 	private DBHelper dbHelper = null;
 	private String category = "";
-	private boolean isLongClicked;
-	private boolean isAddedNewMemo;
+	private boolean isLongClicked = false;
+	private boolean isAddedNewMemo = false;
+	private int isScrolling = 0;
 
 	public static ListFragment newInstance() {
 		return new ListFragment();
@@ -44,8 +50,8 @@ public class ListFragment extends Fragment {
 	@Nullable
 	@Override
 	public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		super.onCreateView(inflater, container, savedInstanceState);
 
-		System.out.println("ListView onCreateView Called!");
 		view = inflater.inflate(R.layout.list_layout, container, false);
 
 		// Open Db
@@ -64,40 +70,62 @@ public class ListFragment extends Fragment {
 		listView.setAdapter(adapter);
 		listView.setDivider(null);
 
+		final MainActivity mainActivity = (MainActivity) getActivity();
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
 		listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
+				String tag = "ListViewGroupClick";
+				Log.d(tag, "GroupClicked: gP: " + groupPosition);
+
 				isLongClicked = false;
 
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
-				if (!isLongClicked && !adapter.isNewMemo()) { // is not long clicked
-					if (listView.isGroupExpanded(groupPosition)) {
+				if (!adapter.isNewMemo()) // is not long clicked
+				{
+					if (listView.isGroupExpanded(groupPosition))
+					{
 						listView.collapseGroupWithAnimation(groupPosition);
-					} else {
+//						listView.getChildAt(groupPosition).clearFocus();
+//						System.out.println(listView.getChildAt(groupPosition));
+						parent.getParent().requestLayout();
+						System.out.println(mainActivity.getCurrentFocus());
+						Log.d(tag, "Collapsing gP: " + groupPosition);
+					}
+					else
+					{
 						listView.expandGroupWithAnimation(groupPosition);
+//						listView.getChildAt(groupPosition).clearFocus();
+//						System.out.println(listView.getChildAt(groupPosition));
+//						MainActivity mainActivity = (MainActivity) getActivity();
+						parent.getParent().requestLayout();
+						System.out.println(mainActivity.getCurrentFocus());
+
+						Log.d(tag, "Expanding gP: " + groupPosition);
 					}
 				}
 
-				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 매가 펼쳐지는 경우 제거하기
-				else if (!isAddedNewMemo)
-					listView.collapseGroupWithAnimation(0);
+				if(adapter.isEditingMemo())
+				{
+					Log.d(tag, "Clear Focus");
+					adapter.getEditingView().clearFocus();
+					// parent.clearChildFocus(v);
+					// parent.requestFocus();
+				}
 
-				listView.requestFocus();
-				System.out.println("onGroupClick!! " + groupPosition + " " + id + " focused?: " + listView.isFocused());
 
-				parent.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-					@Override
-					public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-						System.out.print("dd");
-						return false;
-					}
-				});
+				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거하기
+//				else if (!isAddedNewMemo) {
+//					Log.d(tag, "새로 추가된 메모가 빈메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거");
+//					listView.collapseGroupWithAnimation(0);
+//				}
 
+				Log.d(tag, "Focus of clicked view: " + v.hasFocus());
+				Log.d(tag, "CurrentFocusView: " + ((Activity)listView.getContext()).getCurrentFocus());
 				return true;
 			}
 		});
@@ -105,6 +133,7 @@ public class ListFragment extends Fragment {
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				String tag = "ListViewLongClick";
 
 				TextView titleView = (TextView) view.findViewById(R.id.tv_title);
 
@@ -115,11 +144,12 @@ public class ListFragment extends Fragment {
 					titleView = (TextView) inflatedTitleView.findViewById(R.id.tv_title);
 					position--;
 				}
-
 				final int realGroupPosition = getRealGroupPosition(position);
-				System.out.println("group item is long clicked! " + titleView.getText() + " " + position + " GetRealPosition: " + realGroupPosition);
 
-				// 타이틀 수정 기능 필요
+				Log.d(tag, "LongClicked: realGroupPosition: " + realGroupPosition);
+
+
+				// 메모 제목 수정
 				View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
 				AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
 				dialogBuilder.setView(modifyingMemoTitleView);
@@ -130,13 +160,27 @@ public class ListFragment extends Fragment {
 				etMemoTitle.setText(items.get(realGroupPosition).title.equals("제목없음") ?
 								"" : items.get(realGroupPosition).title);
 
+				// Ignore enter key
+				etMemoTitle.setOnKeyListener(new View.OnKeyListener() {
+					@Override
+					public boolean onKey(View v, int keyCode, KeyEvent event) {
+						if(keyCode == KeyEvent.KEYCODE_ENTER)
+						{
+							System.out.println("KeyEvent.KEYCODE_ENTER");
+							return true;
+						}
+
+						return false;
+					}
+				});
+
 				Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
 				Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
 
 				btConfirmTitle.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						System.out.println("btConfirmTitle Clicked! " + realGroupPosition);
+						Log.d("TitleDialog", "Confirm");
 						String newTitle = etMemoTitle.getText().toString();
 						if (newTitle.equals(""))
 							newTitle = "제목없음";
@@ -144,14 +188,16 @@ public class ListFragment extends Fragment {
 
 						dbHelper.updateTitle(newTitle, titleId);
 						items.get(realGroupPosition).title = newTitle;
+						adapter.notifyDataSetChanged();
 						memoTitleDialog.dismiss();
+
 					}
 				});
 
 				btDeleteMemo.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						System.out.println("btDeleteMemo Clicked! " + realGroupPosition);
+						Log.d("TitleDialog", "Delete");
 						dbHelper.deleteByTime(items.get(realGroupPosition).id);
 						items.remove(realGroupPosition);
 						adapter.notifyDataSetChanged();
@@ -160,43 +206,76 @@ public class ListFragment extends Fragment {
 				});
 
 				memoTitleDialog.show();
+				// Set Selection of edit text
 				etMemoTitle.setSelection(etMemoTitle.length());
 
+				// Prevent for one click
 				isLongClicked = true;
+
+				Log.d(tag, "CurrentFocusView: " + ((Activity)parent.getContext()).getCurrentFocus());
 				return true;
 			}
 		});
 
+		listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+					isScrolling = scrollState;
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				String tag = "ListViewOnScroll";
+
+//				Log.d(tag, "fistVisibleItem: " + firstVisibleItem + " visibleITemCount: " + visibleItemCount + " totalItemCount: " + totalItemCount);
+
+				// Is editing?
+				if(adapter.isEditingMemo() && isScrolling == 1)
+				{
+					int realMemoPosition = getRealEditingMemoPosition(adapter.getEditingGroupPosition());
+					int lastVisibleItem = firstVisibleItem + visibleItemCount;
+//					Log.d(tag, "memo Pos: " + realMemoPosition);
+
+					// 수정하던 메모가 리스트 위쪽으로 사라질 경우
+					if(firstVisibleItem > realMemoPosition)
+					{
+						Log.d(tag, "Memo is upper of ListView");
+						adapter.setEditingGroupPosition(-1);
+						adapter.getEditingView().clearFocus();
+					}
+					// 수정하던 메모가 리스트 아래쪽으로 사라질 경우
+					else if(totalItemCount > visibleItemCount)
+					{
+						if(lastVisibleItem <= realMemoPosition)
+						{
+							Log.d(tag, "Memo is below of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
+							adapter.setEditingGroupPosition(-1);
+							adapter.getEditingView().clearFocus();
+						}
+					}
+				}
+			}
+		});
 
 
-//		listView.setOnTouchListener(new View.OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				ExpandableItemAdapter exAdpater = (ExpandableItemAdapter) listView.getExpandableListAdapter();
-//				EditableTextView currentEditView = exAdpater.getEdittingListView();
-//				if (currentEditView!=null) {
-//					System.out.println(currentEditView.getText());
-//
-//					Layout layout = currentEditView.getLayout();
-//					System.out.println("event.getX(): " + event.getX() + " event.getY(): " + event.getY());
-//					System.out.println("CurrentEditView: " + currentEditView.getScaleX() + " " + currentEditView.getScrollY());
-//					if(event.getX() < currentEditView.getScrollX() || event.getY() < currentEditView.getScrollY());
-//
-//				}
-//
-//
-//				// 아래를 활성화하면 listview drag 시 focus 되어 메모가 저장된다.
-//				// listView.requestFocus();
-//				return false;
-//			}
-//		});
-
-		// new memo will be expanded and have a cursor on it
-		if (isAddedNewMemo) {
+		// New memo will be expanded and have a cursor on it
+		if (isAddedNewMemo)
+		{
+			Log.d("ListView", "newMemo --> expandFirstItem");
 			listView.expandGroupWithAnimation(0);
 			adapter.setIsNewMemo(true);
+
+			// Initializing boolean value
 			isAddedNewMemo = false;
 		}
+
+		listView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				Log.d("ListView", "Focus " + !hasFocus + " --> " + hasFocus + " changed");
+			}
+		});
+
 
 
 		return view;
@@ -207,18 +286,14 @@ public class ListFragment extends Fragment {
 		ExpandableItem.GroupItem item;
 		ExpandableItem.ChildItem citem;
 		Cursor cursor;
-		SharedPreferences pref = getActivity().getSharedPreferences("Category", 0);
 
 		// from db, inserting to group item and child item
 		// 카테고리 설정 시 여기서 디비로 불러올때 사용할 방법을 정하면된다
 		// 현재 시간 내림차순으로 정렬해서 출력한다.
 		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
-		if (category.equals("전체 메모"))
-			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO order by time desc", null);
-		else if (category.equals("미분류"))
-			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '전체 메모' order by time desc", null);
-		else
-			cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
+
+		cursor = dbHelper.getWritableDatabase().rawQuery("select * from MEMO where category = '" + category + "'" + " order by time desc", null);
+
 		while (cursor.moveToNext()) {
 			String id = cursor.getString(7); // db: position
 			item = new ExpandableItem.GroupItem(); // new group item
@@ -232,7 +307,6 @@ public class ListFragment extends Fragment {
 			if (cursor.getString(2) != null) {
 				item.id = id; // give item an id
 				item.title = cursor.getString(1); // give item a memo
-				item.categoryColor = cursor.getString(4).equals("전체 메모") ? "#FFFFFF" : pref.getString(cursor.getString(4), "#FFFFFF");
 
 				citem.memo = cursor.getString(2); // give child item a memo
 				citem.id = item.id; // give child item a same id
@@ -271,6 +345,7 @@ public class ListFragment extends Fragment {
 		return this;
 	}
 
+	// 실제 listView 의 Position 값을 이용해서, GroupPosition 을 반환
 	public int getRealGroupPosition(int currentPosition) {
 		int innerCount = 0;
 		int realGroupPosition = 0;
@@ -286,5 +361,20 @@ public class ListFragment extends Fragment {
 		}
 		return realGroupPosition;
 	}
+
+	// adapter 의 GroupPosition(item 셋의 순서) 를 이용해서, 실제 listView 의 memo 위치를 반환
+	public int getRealEditingMemoPosition(int editingGroupPositionInAdapter)
+	{
+		int realEditingMemoPosition = 0;
+
+		for(int i = 0; i <= editingGroupPositionInAdapter; i++)
+		{
+			if(listView.isGroupExpanded(i))
+				realEditingMemoPosition++;
+		}
+
+		return realEditingMemoPosition + editingGroupPositionInAdapter;
+	}
+
 }
 

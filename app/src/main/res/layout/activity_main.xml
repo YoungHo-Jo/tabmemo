@@ -3,100 +3,12 @@
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
-		android:id="@+id/coorLayoutMain"
+		android:id="@+id/coordLayoutMain"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:background="@color/colorPrimary"
 		android:fitsSystemWindows="true"
 		tools:context=".MainActivity">
-
-	<android.support.v4.widget.DrawerLayout
-			android:id="@+id/drawer_layout"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_marginTop="?attr/actionBarSize"
-			tools:openDrawer="start">
-
-		<LinearLayout
-				android:id="@+id/pos"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="#e1e1e1"
-				android:orientation="horizontal">
-		</LinearLayout>
-
-		<android.support.design.widget.NavigationView
-				android:id="@+id/nav_view"
-				android:layout_width="145dp"
-				android:layout_height="match_parent"
-				android:layout_gravity="start"
-				android:background="#F2F2F2">
-
-			<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:background="#F2F2F2"
-					android:orientation="vertical"
-					android:weightSum="100">
-
-				<Button
-						android:id="@+id/btCategoryAll"
-						android:layout_width="match_parent"
-						android:layout_height="0dp"
-						android:layout_weight="8"
-						android:background="#F2F2F2"
-						android:gravity="start|center"
-						android:paddingEnd="5dp"
-						android:paddingStart="5dp"
-						android:text="@string/category_all"
-						android:textSize="17dp"
-						android:layout_marginTop="20dp"/>
-
-				<Button
-						android:id="@+id/btCategoryUnSorted"
-						android:layout_width="match_parent"
-						android:layout_height="0dp"
-						android:layout_gravity="bottom"
-						android:layout_weight="8"
-						android:background="#F2F2F2"
-						android:gravity="start|center"
-						android:paddingEnd="5dp"
-						android:paddingStart="5dp"
-						android:text="@string/category_nonSorted"
-						android:textSize="17dp"
-						android:layout_marginBottom="20dp"/>
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:background="#D9D9D9"/>
-
-				<ListView
-						android:id="@+id/navigation_list"
-						android:layout_width="match_parent"
-						android:layout_height="0dp"
-						android:layout_weight="76.5"
-						android:background="#F2F2F2"
-						android:divider="@null"
-						android:dividerHeight="0dp"
-						android:overScrollMode="never">
-				</ListView>
-
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:background="#D9D9D9"/>
-
-				<Button
-						android:id="@+id/navigation_button"
-						android:layout_width="match_parent"
-						android:layout_height="0dp"
-						android:layout_weight="7.5"
-						android:background="#ddffffff"
-						android:text="add"
-						android:textColor="#3b428b"/>
-			</LinearLayout>
-		</android.support.design.widget.NavigationView>
-	</android.support.v4.widget.DrawerLayout>
 
 	<android.support.design.widget.AppBarLayout
 			android:id="@+id/appbar"
@@ -114,16 +26,26 @@
 					android:layout_height="?attr/actionBarSize"
 					android:background="@color/colorPrimary"
 					android:theme="@style/Base.Widget.AppCompat.Toolbar"
-					app:popupTheme="@style/AppTheme.PopupOverlay"/>
+					app:popupTheme="@style/AppTheme.NoActionBar"/>
 
-			<Button
-					android:id="@+id/bt_add_new_memo"
+			<!--버튼의 크기는 그대로 두고, 이미지의 크기를 조정하기 위하여 -->
+			<LinearLayout
 					android:layout_width="50dp"
 					android:layout_height="50dp"
 					android:layout_gravity="end|center"
-					android:background="@drawable/edit"
-					android:scaleX="0.4"
-					android:scaleY="0.4"/>
+					android:orientation="horizontal"
+					android:background="@drawable/button_add_new_memo"
+					android:id="@+id/addMemoLinearLayout"
+					android:scaleY="0.4"
+					android:scaleX="0.4">
+				<Button
+						android:id="@+id/bt_add_new_memo"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:background="#00FFFFFF"
+						android:focusable="true"/>
+
+			</LinearLayout>
 
 
 			<TextView
@@ -136,5 +58,73 @@
 		</FrameLayout>
 
 	</android.support.design.widget.AppBarLayout>
+
+	<android.support.v4.widget.DrawerLayout
+			android:id="@+id/drawer_layout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginTop="?attr/actionBarSize"
+			tools:openDrawer="start">
+
+		<requestFocus/>
+
+		<LinearLayout
+				android:id="@+id/pos"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="#e1e1e1"
+				android:orientation="horizontal">
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="0dp"
+				android:orientation="horizontal"
+				android:focusable="true"
+				android:id="@+id/focusLinearLayout"></LinearLayout>
+
+
+
+		<android.support.design.widget.NavigationView
+				android:id="@+id/nav_view"
+				android:layout_width="145dp"
+				android:layout_height="match_parent"
+				android:layout_gravity="start"
+				android:background="#F2F2F2">
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="#F2F2F2"
+					android:orientation="vertical"
+					android:weightSum="10">
+
+				<ListView
+						android:id="@+id/navigation_list"
+						android:layout_width="match_parent"
+						android:layout_height="0dp"
+						android:layout_weight="9"
+						android:background="#F2F2F2"
+						android:divider="@null"
+						android:dividerHeight="0dp"
+						android:overScrollMode="never">
+				</ListView>
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="#D9D9D9"/>
+
+				<Button
+						android:id="@+id/navigation_button"
+						android:layout_width="match_parent"
+						android:layout_height="0dp"
+						android:layout_weight="1"
+						android:background="#ddffffff"
+						android:text="add"
+						android:textColor="#3b428b"/>
+			</LinearLayout>
+		</android.support.design.widget.NavigationView>
+	</android.support.v4.widget.DrawerLayout>
 
 </android.support.design.widget.CoordinatorLayout>

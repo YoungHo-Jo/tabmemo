@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
 	<declare-styleable name="EditableTextView">
 		<attr name="buttonEditDrawable" format="integer" />
 		<attr name="buttonSaveDrawable" format="integer" />
@@ -8,5 +7,4 @@
 		<attr name="showButton" format="boolean" />
 		<attr name="showBackgroundOnViewMode" format="boolean" />
 	</declare-styleable>
-
 </resources>

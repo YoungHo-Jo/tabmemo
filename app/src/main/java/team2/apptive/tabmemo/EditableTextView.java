@@ -56,7 +56,7 @@ public class EditableTextView extends EditText {
 		this.editMode = isEditMode;
 
 		refreshState();
-		requestLayout();
+		requestLayout(); // 주석시 롤리팝에서 무한히 포커를 잃고 얻는 현상 사라짐...
 		invalidate();
 	}
 

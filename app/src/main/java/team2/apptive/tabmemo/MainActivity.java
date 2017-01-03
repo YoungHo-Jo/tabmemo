@@ -1,22 +1,31 @@
 package team2.apptive.tabmemo;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 	ArrayList<String> categoryItems = new ArrayList<>();
 
 	ArrayAdapter<String> categoryListAdapter;
-	private String currentCategory = "전체 메모";
+	private String currentCategory = "탭메모";
 	private TextView tvToolbarCategoryTitle = null;
 	private int category_position;
 	private String categoryTitle;
@@ -80,6 +89,29 @@ public class MainActivity extends AppCompatActivity {
 		//drawer.setDrawerListener(toggle);
     toggle.syncState();
 
+		// toolbar 햄버거 아이콘 변경
+		toggle.setDrawerIndicatorEnabled(false);
+		Drawable hamburgerIconDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.category_menu, this.getTheme());
+		Bitmap newHamburgerIcon = ((BitmapDrawable) hamburgerIconDrawable).getBitmap();
+
+		// scale it to 36 * 36
+		Drawable newHamburgerIconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(
+						newHamburgerIcon, 36, 36, true
+		));
+		// set new scaled hamburger icon
+		toggle.setHomeAsUpIndicator(newHamburgerIconDrawable);
+
+		toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(drawer.isDrawerVisible(GravityCompat.START))
+					drawer.closeDrawer(GravityCompat.START);
+				else
+					drawer.openDrawer(GravityCompat.START);
+			}
+		});
+
+
 
 		// Button (add new memo)
 		Button bt_addNewMemo = (Button) findViewById(R.id.bt_add_new_memo);
@@ -118,30 +150,6 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 
-		// Set click event to Button "전체 메모"
-		Button btCategoryAll = (Button) findViewById(R.id.btCategoryAll);
-		btCategoryAll.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				setCurrentCategory("전체 메모");
-				makeListFragmentByCategory();
-				refreshToolbarCategoryTitle();
-				drawer.closeDrawer(GravityCompat.START);
-			}
-		});
-
-		// Set click event to Button "미분류"
-		Button btCategoryUnSorted = (Button) findViewById(R.id.btCategoryUnSorted);
-		btCategoryUnSorted.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				setCurrentCategory("미분류");
-				makeListFragmentByCategory();
-				refreshToolbarCategoryTitle();
-				drawer.closeDrawer(GravityCompat.START);
-			}
-		});
-
 	}
 
 	class ListViewItemLongClickListener implements  AdapterView.OnItemLongClickListener{
@@ -151,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
 			categoryTitle = categoryItems.get(position).substring(2);
       modify = true;
       category_position = position;
-			mMainDialog = createDialog(parent);
-			System.out.println(view);
+			mMainDialog = createDialog(view);
 			mMainDialog.show();
 			return false;
 		}
@@ -165,33 +172,43 @@ public class MainActivity extends AppCompatActivity {
 		ab.setView(innerView);
 		mMainDialog = ab.create();
 
-		final EditText input = (EditText) innerView.findViewById(R.id.et_categoryTitle);
+		final EditText categoryEditText = (EditText) innerView.findViewById(R.id.et_categoryTitle);
 		Button right_bt = (Button) innerView.findViewById(R.id.bt_right);
 		Button left_bt = (Button) innerView.findViewById(R.id.bt_left);
 
-    input.setText(input.getText().toString().equals("제목없음") ? "" : categoryTitle);
-		input.setSelection(input.length());
+    categoryEditText.setText(categoryEditText.getText().toString().equals("제목없음") ? "" : categoryTitle);
+		categoryEditText.setSelection(categoryEditText.length());
+
+		// 엔터 키 무시
+		categoryEditText.setOnKeyListener(new View.OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if(keyCode == KeyEvent.KEYCODE_ENTER)
+					return true;
+				return false;
+			}
+		});
 
 		right_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String value = input.getText().toString();
-				if (value.equals("")) {
+				String categoryName = categoryEditText.getText().toString();
+				if (categoryName.equals("")) {
 					Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
 				}
 				else {
-					String newCategoryName = "# " + value;
 					if(modify)
 					{
-						categoryItems.set(category_position, newCategoryName);
+						categoryItems.set(category_position, categoryName);
+						// DB에 카테고리 이름 업데이트 필요
 					}
 					else {
-						categoryItems.add(newCategoryName);
-						dbHelper.newInsert("제목없음", newCategoryName);
+						categoryItems.add(categoryName);
+						dbHelper.newInsert("제목없음", categoryName);
 					}
 					categoryListAdapter.notifyDataSetChanged();
 					setDismiss(mMainDialog);
-					setCurrentCategory(newCategoryName);
+					setCurrentCategory(categoryName);
 					refreshToolbarCategoryTitle();
 
 					DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -300,14 +317,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		System.out.println("onResume!");
-	}
-
-
 	public void setCurrentCategory(String _category)
 	{
 		currentCategory = _category;
@@ -323,8 +332,13 @@ public class MainActivity extends AppCompatActivity {
 		tvToolbarCategoryTitle.setText(currentCategory);
 	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
+	public void requestFocusOnFocusLinearLayout()
+	{
+		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.focusLinearLayout);
+		linearLayout.requestFocus();
+		System.out.println("LinearLayout has focus: " + linearLayout.hasFocus());
 	}
+
+
+
 }
