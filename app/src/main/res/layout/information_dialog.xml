@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							android:layout_width="300dp"
+							android:layout_height="wrap_content"
+							android:orientation="vertical"
+							android:background="@drawable/dialog_new"
+							android:layout_alignParentTop="true"
+							android:layout_centerHorizontal="true">
+
+
+
+	<TextView
+			android:layout_marginTop="20dp"
+			android:layout_marginBottom="20dp"
+			android:layout_width="200dp"
+			android:layout_gravity="center"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:gravity="start"
+			android:textColor="@android:color/black"
+			android:textSize="18dp"
+			android:text="@string/information"/>
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:orientation="horizontal"
+			android:weightSum="1">
+
+		<Button
+				android:id="@+id/goToMarketButton"
+				android:layout_width="0dp"
+				android:layout_weight="1"
+				android:layout_height="match_parent"
+				android:background="@drawable/dialog_complete"
+				android:textColor="#101818"
+				android:textSize = "20sp"
+				android:text="@string/goToMarketButtonString" />
+	</LinearLayout>
+</LinearLayout>

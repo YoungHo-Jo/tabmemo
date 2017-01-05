@@ -12,4 +12,9 @@
     <string name="memoTitle_confirmModified">완료</string>
     <string name="hint_categoryHint">카테고리이름</string>
     <string name="hint_memoTitle">제목없음</string>
+    <string name="goToMarketButtonString">마켓으로 이동 및 리뷰 버그제보</string>
+    <string name="informationDialogConfirm">확인</string>
+    <string name="information">
+        만든이: ㅇㅇㅇ\n팀: ㄴㄴㅇㄹ\n하하항
+    </string>
 </resources>

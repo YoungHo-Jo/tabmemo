@@ -11,10 +11,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -80,7 +83,18 @@ public class ListFragment extends Fragment {
 				String tag = "ListViewGroupClick";
 				Log.d(tag, "GroupClicked: gP: " + groupPosition);
 
-				isLongClicked = false;
+//				isLongClicked = false;
+
+				if(adapter.isEditingMemo())
+				{
+					Log.d(tag, "Clear Focus");
+					adapter.getEditingView().clearFocus();
+					// parent.clearChildFocus(v);
+					// parent.requestFocus();
+
+					MainActivity activity = (MainActivity) parent.getContext();
+					activity.requestFocusOnFocusLinearLayout();
+				}
 
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
@@ -92,7 +106,8 @@ public class ListFragment extends Fragment {
 						listView.collapseGroupWithAnimation(groupPosition);
 //						listView.getChildAt(groupPosition).clearFocus();
 //						System.out.println(listView.getChildAt(groupPosition));
-						parent.getParent().requestLayout();
+						MainActivity activity = (MainActivity) parent.getContext();
+						activity.requestFocusOnFocusLinearLayout();
 						System.out.println(mainActivity.getCurrentFocus());
 						Log.d(tag, "Collapsing gP: " + groupPosition);
 					}
@@ -102,20 +117,15 @@ public class ListFragment extends Fragment {
 //						listView.getChildAt(groupPosition).clearFocus();
 //						System.out.println(listView.getChildAt(groupPosition));
 //						MainActivity mainActivity = (MainActivity) getActivity();
-						parent.getParent().requestLayout();
+						MainActivity activity = (MainActivity) parent.getContext();
+						activity.requestFocusOnFocusLinearLayout();
 						System.out.println(mainActivity.getCurrentFocus());
 
 						Log.d(tag, "Expanding gP: " + groupPosition);
 					}
 				}
 
-				if(adapter.isEditingMemo())
-				{
-					Log.d(tag, "Clear Focus");
-					adapter.getEditingView().clearFocus();
-					// parent.clearChildFocus(v);
-					// parent.requestFocus();
-				}
+
 
 
 				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거하기
@@ -136,6 +146,14 @@ public class ListFragment extends Fragment {
 				String tag = "ListViewLongClick";
 
 				TextView titleView = (TextView) view.findViewById(R.id.tv_title);
+
+				if(adapter.isEditingMemo())
+				{
+					Log.d(tag, "Clear Focus");
+					adapter.getEditingView().clearFocus();
+					// parent.clearChildFocus(v);
+					// parent.requestFocus();
+				}
 
 				if (titleView == null) {
 					// this is memo long clicked
@@ -205,12 +223,21 @@ public class ListFragment extends Fragment {
 					}
 				});
 
+
+				// 다이얼로그 위치조정
+				memoTitleDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+				Window window = memoTitleDialog.getWindow();
+				WindowManager.LayoutParams lp = window.getAttributes();
+				lp.y = Gravity.CENTER - 200;
+				memoTitleDialog.getWindow().setAttributes(lp);
+
+				// Show dialog
 				memoTitleDialog.show();
 				// Set Selection of edit text
 				etMemoTitle.setSelection(etMemoTitle.length());
 
 				// Prevent for one click
-				isLongClicked = true;
+//				isLongClicked = true;
 
 				Log.d(tag, "CurrentFocusView: " + ((Activity)parent.getContext()).getCurrentFocus());
 				return true;
@@ -275,6 +302,17 @@ public class ListFragment extends Fragment {
 				Log.d("ListView", "Focus " + !hasFocus + " --> " + hasFocus + " changed");
 			}
 		});
+
+		listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+				System.out.println("child click!");
+				return false;
+			}
+		});
+
+		listView.setItemsCanFocus(true);
 
 
 

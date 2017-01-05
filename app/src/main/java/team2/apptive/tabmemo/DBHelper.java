@@ -93,6 +93,19 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 
+	public void updateCategoryName(String category, String newCategoryName)
+	{
+		SQLiteDatabase db = getReadableDatabase();
+		String str = "";
+
+		Cursor cursor = db.rawQuery("select * from MEMO", null);
+		while (cursor.moveToNext()) {
+			if(cursor.getString(4).equals(category))
+				updateCategory(newCategoryName, cursor.getString(6));
+		}
+
+	}
+
 	public void updatePosition(String position, String time) {
 		SQLiteDatabase db = getWritableDatabase();
 		db.execSQL("update MEMO set position = " + position + " where time = " + time + ";");

@@ -8,6 +8,7 @@
 		android:id="@+id/childItemLinearLayout"
 		android:descendantFocusability="afterDescendants">
 
+
 		<!--focusable이 true이면, adapter 내부에서 클릭은 동작하나, listFragment 내부 child Click 은 동작하지 않는다-->
 		<!--focusable이 false 이면, adapter 내부 클릭도 동작하지 않고, edittext에 focus 가 되지않아 수정불가능한 상황이 된다-->
 		<!--<TextView-->

@@ -32,6 +32,9 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private int editingGroupPosition = -1;
 
 
+	private long timer = 0;
+
+
 	// Constructor
 	public ExpandableItemAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
@@ -77,18 +80,18 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		holder.memo.setText(item.memo);
 
 		// 메모 수정 클릭
-//		holder.memo.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				final EditableTextView editView = (EditableTextView) v;
-//				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
-//				System.out.println("GroupPosition: " + groupPosition + " childPosition: " + childPosition);
-//
-//				editView.requestFocus(); // focusing on memo
-//
-//				System.out.println("editView has focus: " + editView.hasFocus());
-//			}
-//		});
+		holder.memo.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final EditableTextView editView = (EditableTextView) v;
+				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
+				System.out.println("GroupPosition: " + groupPosition + " childPosition: " + childPosition);
+
+				editView.requestFocus(); // focusing on memo
+
+				System.out.println("editView has focus: " + editView.hasFocus());
+			}
+		});
 
 		final ExpandableItemAdapter eia = this;
 		holder.memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -125,10 +128,12 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 					editingGroupPosition = groupPosition;
 
 					// 키보드 열기
-					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
+//					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 					Log.d(tag, "Show keyboard");
 					// Save editing view
 					editingView = focusedEditView;
+
+					timer = System.currentTimeMillis();
 				}
 
 				// This is not edit mode
@@ -198,12 +203,12 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 
 		// Control memos that is not in edit mode
-		if(groupPosition != editingGroupPosition)
-		{
-			holder.memo.setEditMode(false);
-		}
-		else
-			Log.d(tag, "gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
+//		if(groupPosition != editingGroupPosition)
+//		{
+//			holder.memo.setEditMode(false);
+//		}
+//		else
+//			Log.d(tag, "gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
 
 
 		Activity activity = (Activity) parent.getContext();

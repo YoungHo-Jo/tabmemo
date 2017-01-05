@@ -15,6 +15,8 @@
 			android:layout_height="match_parent"
 			android:childDivider="#e1e1e1"
 			android:dividerHeight="1dp"
-			android:descendantFocusability="afterDescendants"/> <!-- 내부 부터 포커스 -->
+			android:descendantFocusability="afterDescendants"/> <!--내부 부터 포커스-->
+
+	<!---->
 
 </LinearLayout>
