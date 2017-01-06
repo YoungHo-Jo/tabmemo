@@ -42,7 +42,6 @@ public class ListFragment extends Fragment {
 	private View view;
 	private DBHelper dbHelper = null;
 	private String category = "";
-	private boolean isLongClicked = false;
 	private boolean isAddedNewMemo = false;
 	private int isScrolling = 0;
 
@@ -80,7 +79,7 @@ public class ListFragment extends Fragment {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
 				String tag = "ListViewGroupClick";
-				Log.d(tag, "GroupClicked: gP: " + groupPosition);
+//				Log.d(tag, "GroupClicked: gP: " + groupPosition);
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
@@ -99,12 +98,12 @@ public class ListFragment extends Fragment {
 					if (listView.isGroupExpanded(groupPosition))
 					{
 						listView.collapseGroupWithAnimation(groupPosition);
-						Log.d(tag, "Collapsing gP: " + groupPosition);
+//						Log.d(tag, "Collapsing gP: " + groupPosition);
 					}
 					else
 					{
 						listView.expandGroupWithAnimation(groupPosition);
-						Log.d(tag, "Expanding gP: " + groupPosition);
+//						Log.d(tag, "Expanding gP: " + groupPosition);
 					}
 				}
 
@@ -115,8 +114,8 @@ public class ListFragment extends Fragment {
 //					listView.collapseGroupWithAnimation(0);
 //				}
 
-				Log.d(tag, "Focus of clicked view: " + v.hasFocus());
-				Log.d(tag, "CurrentFocusView: " + ((Activity)listView.getContext()).getCurrentFocus());
+//				Log.d(tag, "Focus of clicked view: " + v.hasFocus());
+//				Log.d(tag, "CurrentFocusView: " + ((Activity)listView.getContext()).getCurrentFocus());
 				return true;
 			}
 		});
@@ -130,7 +129,7 @@ public class ListFragment extends Fragment {
 
 				if(adapter.isEditingMemo())
 				{
-					Log.d(tag, "Clear Focus");
+//					Log.d(tag, "Clear Focus");
 					adapter.getEditingView().clearFocus();
 				}
 
@@ -143,7 +142,7 @@ public class ListFragment extends Fragment {
 				}
 
 				final int realGroupPosition = getRealGroupPosition(position);
-				Log.d(tag, "LongClicked: realGroupPosition: " + realGroupPosition);
+//				Log.d(tag, "LongClicked: realGroupPosition: " + realGroupPosition);
 
 				// 메모 제목 수정
 				View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
@@ -162,7 +161,7 @@ public class ListFragment extends Fragment {
 				btConfirmTitle.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Log.d("TitleDialog", "Confirm");
+//						Log.d("TitleDialog", "Confirm");
 						String newTitle = etMemoTitle.getText().toString();
 						if (newTitle.equals(""))
 							newTitle = "제목없음";
@@ -179,7 +178,7 @@ public class ListFragment extends Fragment {
 				btDeleteMemo.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Log.d("TitleDialog", "Delete");
+//						Log.d("TitleDialog", "Delete");
 						for(int i = realGroupPosition; i < items.size(); i++) // More natural view for deleting memo
 						{
 							if(listView.isGroupExpanded(i + 1))
@@ -205,7 +204,7 @@ public class ListFragment extends Fragment {
 					public boolean onKey(View v, int keyCode, KeyEvent event) {
 						if(keyCode == KeyEvent.KEYCODE_ENTER)
 						{
-							System.out.println("KeyEvent.KEYCODE_ENTER");
+//							System.out.println("KeyEvent.KEYCODE_ENTER");
 							btConfirmTitle.performClick();
 							return true;
 						}
@@ -227,7 +226,7 @@ public class ListFragment extends Fragment {
 				// Set Selection of edit text
 				etMemoTitle.setSelection(etMemoTitle.length());
 
-				Log.d(tag, "CurrentFocusView: " + ((Activity)parent.getContext()).getCurrentFocus());
+//				Log.d(tag, "CurrentFocusView: " + ((Activity)parent.getContext()).getCurrentFocus());
 				return true;
 			}
 		});
@@ -254,7 +253,7 @@ public class ListFragment extends Fragment {
 					// 수정하던 메모가 리스트 위쪽으로 사라질 경우
 					if(firstVisibleItem > realMemoPosition)
 					{
-						Log.d(tag, "Memo is upper of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
+//						Log.d(tag, "Memo is upper of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
 						adapter.setEditingGroupPosition(-1);
 						adapter.getEditingView().clearFocus();
 					}
@@ -263,7 +262,7 @@ public class ListFragment extends Fragment {
 					{
 						if(lastVisibleItem <= realMemoPosition)
 						{
-							Log.d(tag, "Memo is below of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
+//							Log.d(tag, "Memo is below of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
 							adapter.setEditingGroupPosition(-1);
 							adapter.getEditingView().clearFocus();
 						}
@@ -276,7 +275,7 @@ public class ListFragment extends Fragment {
 		// New memo will be expanded and have a cursor on it
 		if (isAddedNewMemo)
 		{
-			Log.d("ListView", "newMemo --> expandFirstItem");
+//			Log.d("ListView", "newMemo --> expandFirstItem");
 			listView.expandGroupWithAnimation(0);
 			adapter.setIsNewMemo(true);
 
@@ -287,7 +286,7 @@ public class ListFragment extends Fragment {
 		listView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				Log.d("ListView", "Focus " + !hasFocus + " --> " + hasFocus + " changed");
+//				Log.d("ListView", "Focus " + !hasFocus + " --> " + hasFocus + " changed");
 			}
 		});
 

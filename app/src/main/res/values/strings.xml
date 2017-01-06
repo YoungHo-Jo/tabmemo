@@ -14,7 +14,6 @@
     <string name="hint_memoTitle">제목없음</string>
     <string name="goToMarketButtonString">리뷰 및 버그제보</string>
     <string name="informationDialogConfirm">확인</string>
-    <string name="information">
-        양미란 이다원\nDarrenKim 조영호
-    </string>
+    <string name="information">"김현우  양미란\n\n이다원  조영호"</string>
+    <string name="apptive">앱티브</string>
 </resources>

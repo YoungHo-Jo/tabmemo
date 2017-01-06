@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 	private int category_position;
 	private String categoryTitle;
   private boolean modify = false;
-	private boolean isAddCategory = false;
-
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -275,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
 					if (modify) {
 						categoryItems.set(category_position, categoryName);
 						dbHelper.updateCategoryName(categoryTitle, categoryName);
-						// DB에 카테고리 이름 업데이트 필요
 					} else {
 						categoryItems.add(categoryName);
 						dbHelper.newInsert("제목없음", categoryName);
@@ -296,9 +293,13 @@ public class MainActivity extends AppCompatActivity {
 					drawer.closeDrawer(GravityCompat.START);
 
 					if(modify) // 카테고리에 맞는 항목들 보여줌
+					{
 						currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+					}
 					else
+					{
 						currentFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+					}
 
 					modify = false;
 					categoryTitle = "";
@@ -346,8 +347,8 @@ public class MainActivity extends AppCompatActivity {
 		categoryEditText.setOnKeyListener(new View.OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if(keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN) {
-					System.out.println("enter || action done");
+				if(keyCode == KeyEvent.KEYCODE_ENTER) {
+//					System.out.println("enter || action done");
 					right_bt.performClick();
 					return true;
 				}

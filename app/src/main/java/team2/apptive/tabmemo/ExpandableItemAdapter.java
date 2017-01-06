@@ -61,7 +61,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		String tag = "AdapterGetRealChildView";
 		final ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
 
-		Log.d(tag, "getRealChildView gP(" + groupPosition + ") cP:(" + childPosition + ")");
+//		Log.d(tag, "getRealChildView gP(" + groupPosition + ") cP:(" + childPosition + ")");
 		if (convertView == null)
 		{
 			holder = new ExpandableItem.ChildHolder();
@@ -75,7 +75,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 
 		if(groupPosition == editingGroupPosition)
-			Log.d(tag, "has focus: " + holder.memo.hasFocus());
+//			Log.d(tag, "has focus: " + holder.memo.hasFocus());
 
 		// Set memo content
 		holder.memo.setText(item.memo);
@@ -100,7 +100,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		convertView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				Log.d("AdapterOnTouchListener", "Initializing");
+//				Log.d("AdapterOnTouchListener", "Initializing");
 				initializeFocusAndPos();
 				return false;
 			}
@@ -111,10 +111,10 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			public boolean onTouch(View v, MotionEvent event) {
 				if(v.hasFocus())
 				{
-					Log.d("AdapterOnTouchListener", "This View has focused --> Ignore touch event");
+//					Log.d("AdapterOnTouchListener", "This View has focused --> Ignore touch event");
 					return false;
 				}
-				Log.d("AdapterOnTouchListener", "Initializing");
+//				Log.d("AdapterOnTouchListener", "Initializing");
 				initializeFocusAndPos();
 				return false;
 			}
@@ -135,7 +135,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 
 				// Debug message
-				Log.d(tag, "Focus: " + !hasFocus + " --> " + hasFocus + " changed");
+//				Log.d(tag, "Focus: " + !hasFocus + " --> " + hasFocus + " changed");
 
 				final EditableTextView focusedEditView = (EditableTextView) v;
 
@@ -162,7 +162,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 					// 키보드 열기
 					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
-					Log.d(tag, "Show keyboard");
+//					Log.d(tag, "Show keyboard");
 					// Save editing view
 					editingView = focusedEditView;
 
@@ -173,7 +173,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 				{
 
 					// Debug Message
-					Log.d(tag, "Save Memo");
+//					Log.d(tag, "Save Memo");
 
 					focusedEditView.setEditMode(false);
 					focusedEditView.clearFocus();
@@ -183,7 +183,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 					// empty memo
 					if (item.memo.equals(""))
 					{
-						Log.d(tag, "Empty Memo");
+//						Log.d(tag, "Empty Memo");
 						// Update DB
 						dbHelper.updatMemoToNull(item.id);
 
@@ -196,24 +196,24 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 					// Hide Keyboard
 					inputMethodManager.hideSoftInputFromWindow(focusedEditView.getWindowToken(), 0);
-					Log.d(tag, "Hide keyboard");
+//					Log.d(tag, "Hide keyboard");
 
 					// Toast Message (save done)
 //					Toast.makeText(v.getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
 
 					// Initializing
-					Log.d(tag, "Before Set: isEditingMemo(" + isEditingMemo + ") isNewMemo(" + isNewMemo + ") editingGroupPos(" + editingGroupPosition + ") editingView(" + editingView + ")");
+//					Log.d(tag, "Before Set: isEditingMemo(" + isEditingMemo + ") isNewMemo(" + isNewMemo + ") editingGroupPos(" + editingGroupPosition + ") editingView(" + editingView + ")");
 					isEditingMemo = false;
 					editingView = null;
 					isNewMemo = false;
 					editingGroupPosition = -1;
-					Log.d(tag, "After Set: isEditingMemo(" + isEditingMemo + ") isNewMemo(" + isNewMemo + ") editingGroupPos(" + editingGroupPosition + ") editingView(" + editingView + ")");
+//					Log.d(tag, "After Set: isEditingMemo(" + isEditingMemo + ") isNewMemo(" + isNewMemo + ") editingGroupPos(" + editingGroupPosition + ") editingView(" + editingView + ")");
 
 
-					Activity activity = (Activity) v.getContext();
-					Log.d(tag, "GetCurrentFocus before notifyData..." + activity.getCurrentFocus() + " gp: " + groupPosition);
+//					Activity activity = (Activity) v.getContext();
+//					Log.d(tag, "GetCurrentFocus before notifyData..." + activity.getCurrentFocus() + " gp: " + groupPosition);
 					eia.notifyDataSetChanged();
-					Log.d(tag, "GetCurrentFocus after notifyData2..." + activity.getCurrentFocus() + " gp: " + groupPosition);
+//					Log.d(tag, "GetCurrentFocus after notifyData2..." + activity.getCurrentFocus() + " gp: " + groupPosition);
 
 				}
 				// close database
@@ -227,7 +227,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		if (isNewMemo && groupPosition == 0 && childPosition == 0)
 		{
 			// Debug Message
-			Log.d(tag, "New Memo: focusing");
+//			Log.d(tag, "New Memo: focusing");
 
 			// Edit mode
 			holder.memo.requestFocus();
@@ -244,14 +244,13 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		}
 		else
 		{
-			Log.d(tag, "Editing Position: gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
+//			Log.d(tag, "Editing Position: gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
 		}
 
 
 
-		Activity activity = (Activity) parent.getContext();
-		Log.d(tag, "CurrentFocusView: gP(" + groupPosition + ") cP(" + childPosition + ") view(" +  activity.getCurrentFocus() + ")");
-
+//		Activity activity = (Activity) parent.getContext();
+//		Log.d(tag, "CurrentFocusView: gP(" + groupPosition + ") cP(" + childPosition + ") view(" +  activity.getCurrentFocus() + ")");
 
 		return convertView;
 	}
@@ -318,16 +317,16 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 	@Override
 	public void notifyDataSetChanged() {
-		Log.d("Adapter", "notifyDataSetChanged");
+//		Log.d("Adapter", "notifyDataSetChanged");
 		for (int i = 0; i < items.size(); i++) {
 			if(isNewMemo)
 				continue;
 			if (items.get(i).cItems.get(0).memo.equals("")) {
 				items.remove(i);
-				Log.d("Adapter", "Remove empty memo in data set");
+//				Log.d("Adapter", "Remove empty memo in data set");
 			}
 		}
-		Log.d("Adapter", "CurrentFocusView(" + ((Activity)inflater.getContext()).getCurrentFocus() + ")");
+//		Log.d("Adapter", "CurrentFocusView(" + ((Activity)inflater.getContext()).getCurrentFocus() + ")");
 		super.notifyDataSetChanged();
 	}
 
