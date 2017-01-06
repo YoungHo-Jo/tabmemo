@@ -5,27 +5,12 @@
 		android:layout_height="match_parent"
 		android:background="#e1e1e1"
 		android:orientation="vertical"
-		android:id="@+id/childItemLinearLayout"
+		android:id="@+id/childItemLinearLayou"
 		android:descendantFocusability="afterDescendants">
 
 
 		<!--focusable이 true이면, adapter 내부에서 클릭은 동작하나, listFragment 내부 child Click 은 동작하지 않는다-->
 		<!--focusable이 false 이면, adapter 내부 클릭도 동작하지 않고, edittext에 focus 가 되지않아 수정불가능한 상황이 된다-->
-		<!--<TextView-->
-				<!--android:layout_width="match_parent"-->
-				<!--android:layout_height="wrap_content"-->
-				<!--android:layout_marginLeft="15dp"-->
-				<!--android:layout_marginRight="15dp"-->
-				<!--android:layout_marginBottom="17dp"-->
-				<!--android:background="#ffffff"-->
-				<!--android:paddingBottom="10dp"-->
-				<!--android:paddingTop="10dp"-->
-				<!--android:paddingLeft="20dp"-->
-				<!--android:paddingRight="20dp"-->
-				<!--android:textColor="#000000"-->
-				<!--android:textSize="15dp"-->
-				<!--android:id="@+id/childItemTextView"/>-->
-
 		<team2.apptive.tabmemo.EditableTextView
 				android:id="@+id/tv_clickableTextMemo"
 				android:layout_width="match_parent"
@@ -45,14 +30,6 @@
 				android:visibility="visible"/>
 
 	<!--xml에서 focusable 이 true 면 requestfocus 를 활용하여 포커를 주어 수정가능하지만, false면 java코드로 가능하게 하여도 되지 않는문제 발생-->
-
-	<!--<EditText-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:id="@+id/testEditText"-->
-			<!--android:visibility="gone"-->
-			<!--android:focusableInTouchMode="true"-->
-			<!--android:cursorVisible="true"/>-->
 
 
 </LinearLayout>

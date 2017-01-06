@@ -2,12 +2,17 @@ package team2.apptive.tabmemo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,10 +36,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private boolean isEditingMemo = false;
 	private int editingGroupPosition = -1;
 
-
-	private long timer = 0;
-
-
 	// Constructor
 	public ExpandableItemAdapter(Context context) {
 		inflater = LayoutInflater.from(context);
@@ -56,7 +57,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	}
 
 	@Override
-	public View getRealChildView(final int groupPosition, final int childPosition, final boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getRealChildView(final int groupPosition, final int childPosition, final boolean isLastChild, View convertView, final ViewGroup parent) {
 		String tag = "AdapterGetRealChildView";
 		final ExpandableItem.ChildItem item = getChild(groupPosition, childPosition);
 
@@ -80,30 +81,62 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		holder.memo.setText(item.memo);
 
 		// 메모 수정 클릭
-		holder.memo.setOnClickListener(new View.OnClickListener() {
+//		holder.memo.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				final EditableTextView editView = (EditableTextView) v;
+//				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
+//				System.out.println("GroupPosition: " + groupPosition + " childPosition: " + childPosition);
+//
+//				editView.requestFocus(); // focusing on memo
+//
+//				System.out.println("editView has focus: " + editView.hasFocus());
+//			}
+//		});
+
+
+		final ExpandableItemAdapter eia = this;
+
+		convertView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
-			public void onClick(View v) {
-				final EditableTextView editView = (EditableTextView) v;
-				System.out.println("holder.memo is Clicked! current state " + editView.isEditMode() + " view: " + editView);
-				System.out.println("GroupPosition: " + groupPosition + " childPosition: " + childPosition);
-
-				editView.requestFocus(); // focusing on memo
-
-				System.out.println("editView has focus: " + editView.hasFocus());
+			public boolean onTouch(View v, MotionEvent event) {
+				Log.d("AdapterOnTouchListener", "Initializing");
+				initializeFocusAndPos();
+				return false;
 			}
 		});
 
-		final ExpandableItemAdapter eia = this;
+		holder.memo.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(v.hasFocus())
+				{
+					Log.d("AdapterOnTouchListener", "This View has focused --> Ignore touch event");
+					return false;
+				}
+				Log.d("AdapterOnTouchListener", "Initializing");
+				initializeFocusAndPos();
+				return false;
+			}
+		});
+
+
+
 		holder.memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				String tag = "AdapterOnFocusChange";
-				System.out.println(v.getParent());
+
+				// Control un focused view
+				if (editingGroupPosition != -1 && !isNewMemo)
+				{
+					return;
+				}
+
 
 				// Debug message
 				Log.d(tag, "Focus: " + !hasFocus + " --> " + hasFocus + " changed");
 
-				// Type casting to EditableTextView
 				final EditableTextView focusedEditView = (EditableTextView) v;
 
 				// Open DB
@@ -114,8 +147,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 
 				// This is edit mode
-				if (v.hasFocus()) {
-
+				if (v.hasFocus())
+				{
 					isEditingMemo = true;
 
 					// Set edit mode to true to write memo
@@ -128,24 +161,22 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 					editingGroupPosition = groupPosition;
 
 					// 키보드 열기
-//					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
+					inputMethodManager.showSoftInput(focusedEditView, InputMethodManager.SHOW_FORCED);
 					Log.d(tag, "Show keyboard");
 					// Save editing view
 					editingView = focusedEditView;
 
-					timer = System.currentTimeMillis();
 				}
 
 				// This is not edit mode
-				else {
+				else
+				{
+
 					// Debug Message
 					Log.d(tag, "Save Memo");
 
 					focusedEditView.setEditMode(false);
-
-//					focusedEditView.clearFocus();
-					MainActivity mainActivity = (MainActivity) focusedEditView.getContext();
-					mainActivity.requestFocusOnFocusLinearLayout();
+					focusedEditView.clearFocus();
 
 					item.memo = focusedEditView.getText().toString();
 
@@ -155,6 +186,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 						Log.d(tag, "Empty Memo");
 						// Update DB
 						dbHelper.updatMemoToNull(item.id);
+
+						((ExpandableListView) parent).collapseGroup(0);
 					}
 					else // non-empty memo
 					{
@@ -165,8 +198,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 					inputMethodManager.hideSoftInputFromWindow(focusedEditView.getWindowToken(), 0);
 					Log.d(tag, "Hide keyboard");
 
-					// Update data set
-					// Toast
+					// Toast Message (save done)
 //					Toast.makeText(v.getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
 
 					// Initializing
@@ -179,11 +211,12 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 
 					Activity activity = (Activity) v.getContext();
-					Log.d(tag, "GetCurrentFocus before notifyData..." + activity.getCurrentFocus());
+					Log.d(tag, "GetCurrentFocus before notifyData..." + activity.getCurrentFocus() + " gp: " + groupPosition);
 					eia.notifyDataSetChanged();
-					Log.d(tag, "GetCurrentFocus after notifyData..." + activity.getCurrentFocus());
-				}
+					Log.d(tag, "GetCurrentFocus after notifyData2..." + activity.getCurrentFocus() + " gp: " + groupPosition);
 
+				}
+				// close database
 				dbHelper.close();
 
 
@@ -191,28 +224,34 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 		});
 
 		// new Memo for spreading memo and focus it
-		if (isNewMemo && groupPosition == 0 && childPosition == 0) {
+		if (isNewMemo && groupPosition == 0 && childPosition == 0)
+		{
 			// Debug Message
 			Log.d(tag, "New Memo: focusing");
 
 			// Edit mode
 			holder.memo.requestFocus();
+			holder.memo.setEditMode(true);
 			isEditingMemo = true;
 			editingGroupPosition = 0;
 			editingView = holder.memo;
 		}
 
 		// Control memos that is not in edit mode
-//		if(groupPosition != editingGroupPosition)
-//		{
-//			holder.memo.setEditMode(false);
-//		}
-//		else
-//			Log.d(tag, "gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
+		if(groupPosition != editingGroupPosition)
+		{
+			holder.memo.setEditMode(false);
+		}
+		else
+		{
+			Log.d(tag, "Editing Position: gp(" + groupPosition + ") == egP(" + editingGroupPosition + ")");
+		}
+
 
 
 		Activity activity = (Activity) parent.getContext();
 		Log.d(tag, "CurrentFocusView: gP(" + groupPosition + ") cP(" + childPosition + ") view(" +  activity.getCurrentFocus() + ")");
+
 
 		return convertView;
 	}
@@ -311,6 +350,14 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	public void setEditingGroupPosition(int groupPosition)
 	{
 		editingGroupPosition = groupPosition;
+	}
+
+	public void initializeFocusAndPos()
+	{
+		editingGroupPosition = -1;
+		isEditingMemo = false;
+		if(editingView != null)
+			editingView.clearFocus();
 	}
 
 

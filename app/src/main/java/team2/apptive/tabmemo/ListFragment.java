@@ -71,9 +71,8 @@ public class ListFragment extends Fragment {
 		listView = (AnimatedExpandableListView) view.findViewById(R.id.ll_expandable);
 		listView.setGroupIndicator(null);
 		listView.setAdapter(adapter);
-		listView.setDivider(null);
 
-		final MainActivity mainActivity = (MainActivity) getActivity();
+		listView.setDivider(null);
 
 		// In order to show animations, we need to use a custom click handler
 		// for our ExpandableListView.
@@ -82,50 +81,32 @@ public class ListFragment extends Fragment {
 			public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
 				String tag = "ListViewGroupClick";
 				Log.d(tag, "GroupClicked: gP: " + groupPosition);
-
-//				isLongClicked = false;
-
-				if(adapter.isEditingMemo())
-				{
-					Log.d(tag, "Clear Focus");
-					adapter.getEditingView().clearFocus();
-					// parent.clearChildFocus(v);
-					// parent.requestFocus();
-
-					MainActivity activity = (MainActivity) parent.getContext();
-					activity.requestFocusOnFocusLinearLayout();
-				}
-
 				// We call collapseGroupWithAnimation(int) and
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
+
+				// Initializing
+				adapter.setEditingGroupPosition(-1);
+				if(adapter.getEditingView() != null || adapter.isEditingMemo())
+				{
+					adapter.getEditingView().clearFocus();
+					return true;
+				}
+
+
 				if (!adapter.isNewMemo()) // is not long clicked
 				{
 					if (listView.isGroupExpanded(groupPosition))
 					{
 						listView.collapseGroupWithAnimation(groupPosition);
-//						listView.getChildAt(groupPosition).clearFocus();
-//						System.out.println(listView.getChildAt(groupPosition));
-						MainActivity activity = (MainActivity) parent.getContext();
-						activity.requestFocusOnFocusLinearLayout();
-						System.out.println(mainActivity.getCurrentFocus());
 						Log.d(tag, "Collapsing gP: " + groupPosition);
 					}
 					else
 					{
 						listView.expandGroupWithAnimation(groupPosition);
-//						listView.getChildAt(groupPosition).clearFocus();
-//						System.out.println(listView.getChildAt(groupPosition));
-//						MainActivity mainActivity = (MainActivity) getActivity();
-						MainActivity activity = (MainActivity) parent.getContext();
-						activity.requestFocusOnFocusLinearLayout();
-						System.out.println(mainActivity.getCurrentFocus());
-
 						Log.d(tag, "Expanding gP: " + groupPosition);
 					}
 				}
-
-
 
 
 				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거하기
@@ -151,8 +132,6 @@ public class ListFragment extends Fragment {
 				{
 					Log.d(tag, "Clear Focus");
 					adapter.getEditingView().clearFocus();
-					// parent.clearChildFocus(v);
-					// parent.requestFocus();
 				}
 
 				if (titleView == null) {
@@ -162,10 +141,9 @@ public class ListFragment extends Fragment {
 					titleView = (TextView) inflatedTitleView.findViewById(R.id.tv_title);
 					position--;
 				}
+
 				final int realGroupPosition = getRealGroupPosition(position);
-
 				Log.d(tag, "LongClicked: realGroupPosition: " + realGroupPosition);
-
 
 				// 메모 제목 수정
 				View modifyingMemoTitleView = inflater.inflate(R.layout.memo_title_modified_message_box, null);
@@ -178,22 +156,8 @@ public class ListFragment extends Fragment {
 				etMemoTitle.setText(items.get(realGroupPosition).title.equals("제목없음") ?
 								"" : items.get(realGroupPosition).title);
 
-				// Ignore enter key
-				etMemoTitle.setOnKeyListener(new View.OnKeyListener() {
-					@Override
-					public boolean onKey(View v, int keyCode, KeyEvent event) {
-						if(keyCode == KeyEvent.KEYCODE_ENTER)
-						{
-							System.out.println("KeyEvent.KEYCODE_ENTER");
-							return true;
-						}
-
-						return false;
-					}
-				});
-
 				Button btDeleteMemo = (Button) modifyingMemoTitleView.findViewById(R.id.bt_deleteMemo);
-				Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
+				final Button btConfirmTitle = (Button) modifyingMemoTitleView.findViewById(R.id.bt_confirmTitle);
 
 				btConfirmTitle.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -216,10 +180,37 @@ public class ListFragment extends Fragment {
 					@Override
 					public void onClick(View v) {
 						Log.d("TitleDialog", "Delete");
+						for(int i = realGroupPosition; i < items.size(); i++) // More natural view for deleting memo
+						{
+							if(listView.isGroupExpanded(i + 1))
+							{
+								listView.expandGroup(i);
+							}
+							else if(!listView.isGroupExpanded(i+1))
+							{
+								listView.collapseGroup(i);
+							}
+						}
+
 						dbHelper.deleteByTime(items.get(realGroupPosition).id);
 						items.remove(realGroupPosition);
 						adapter.notifyDataSetChanged();
 						memoTitleDialog.dismiss();
+					}
+				});
+
+				// Ignore enter key
+				etMemoTitle.setOnKeyListener(new View.OnKeyListener() {
+					@Override
+					public boolean onKey(View v, int keyCode, KeyEvent event) {
+						if(keyCode == KeyEvent.KEYCODE_ENTER)
+						{
+							System.out.println("KeyEvent.KEYCODE_ENTER");
+							btConfirmTitle.performClick();
+							return true;
+						}
+
+						return false;
 					}
 				});
 
@@ -235,9 +226,6 @@ public class ListFragment extends Fragment {
 				memoTitleDialog.show();
 				// Set Selection of edit text
 				etMemoTitle.setSelection(etMemoTitle.length());
-
-				// Prevent for one click
-//				isLongClicked = true;
 
 				Log.d(tag, "CurrentFocusView: " + ((Activity)parent.getContext()).getCurrentFocus());
 				return true;
@@ -266,7 +254,7 @@ public class ListFragment extends Fragment {
 					// 수정하던 메모가 리스트 위쪽으로 사라질 경우
 					if(firstVisibleItem > realMemoPosition)
 					{
-						Log.d(tag, "Memo is upper of ListView");
+						Log.d(tag, "Memo is upper of ListView memo Pos(" + realMemoPosition + ") lastVisibleItem(" + lastVisibleItem + ")");
 						adapter.setEditingGroupPosition(-1);
 						adapter.getEditingView().clearFocus();
 					}
@@ -303,18 +291,7 @@ public class ListFragment extends Fragment {
 			}
 		});
 
-		listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-			@Override
-			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
-				System.out.println("child click!");
-				return false;
-			}
-		});
-
 		listView.setItemsCanFocus(true);
-
-
 
 		return view;
 	}
@@ -362,16 +339,6 @@ public class ListFragment extends Fragment {
 		return this;
 	}
 
-	public void addNewTitleMemo(String title, String category) {
-		dbHelper.newInsert(title, category);
-		isAddedNewMemo = true;
-	}
-
-	public void refreshFragment() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		listView.deferNotifyDataSetChanged();
-		ft.detach(this).attach(this).commit();
-	}
 
 	public ExpandableItemAdapter getAdapter() {
 		return adapter;

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 	private final long FINISH_INTERVAL_TIME = 2000;
 
 	private Dialog mMainDialog; // Dialog for adding or modifying a category
+	private ListFragment currentFragment = null;
 
 	private long backPressedTime = 0;
 	private DBHelper dbHelper = null;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 	private int category_position;
 	private String categoryTitle;
   private boolean modify = false;
+	private boolean isAddCategory = false;
+
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,13 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
 		// toolbar 햄버거 아이콘 변경
 		toggle.setDrawerIndicatorEnabled(false);
-//		Drawable hamburgerIconDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.category, this.getTheme());
-//		Bitmap newHamburgerIcon = ((BitmapDrawable) hamburgerIconDrawable).getBitmap();
-//
-//		// scale it
-//		Drawable newHamburgerIconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(
-//						newHamburgerIcon, 76, 76, true
-//		));
 
 		// set new scaled hamburger icon
 		toggle.setHomeAsUpIndicator(R.drawable.category);
@@ -110,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 					drawer.closeDrawer(GravityCompat.START);
 				else
 					drawer.openDrawer(GravityCompat.START);
+				currentFragment.getAdapter().initializeFocusAndPos();
 			}
 		});
 
@@ -125,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				modify = false;
+
 				mMainDialog = createDialog(v);
 				mMainDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
@@ -132,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
 				WindowManager.LayoutParams lp = window.getAttributes();
 				lp.y = Gravity.CENTER - 200;
 				mMainDialog.getWindow().setAttributes(lp);
-
 				mMainDialog.show();
 			}
 		});
@@ -148,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
 		// refresh toolbar title
 		refreshToolbarCategoryTitle();
 
-		// memo listview fragment
-		showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+		// memo listView fragment
+		currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 
 		// Set long click event listener to category items
 		categoryListView.setOnItemLongClickListener(new ListViewItemLongClickListener());
@@ -159,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				setCurrentCategory(categoryItems.get(position));
+
 				makeListFragmentByCategory();
 				refreshToolbarCategoryTitle();
 				drawer.closeDrawer(GravityCompat.START);
@@ -298,9 +296,9 @@ public class MainActivity extends AppCompatActivity {
 					drawer.closeDrawer(GravityCompat.START);
 
 					if(modify) // 카테고리에 맞는 항목들 보여줌
-						showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+						currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 					else
-						showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+						currentFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 
 					modify = false;
 					categoryTitle = "";
@@ -313,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
         public void onClick(View v) {
+
 
 				if(categoryItems.size() == 1)
 				{
@@ -334,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
 
 					refreshToolbarCategoryTitle();
 
-					showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+					currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 
 					categoryListAdapter.notifyDataSetChanged();
 					setDismiss(mMainDialog);
@@ -364,10 +363,10 @@ public class MainActivity extends AppCompatActivity {
 			dialog.dismiss();
 	}
 
-	private Fragment showFragment(Fragment fragment) {
+	private ListFragment showFragment(Fragment fragment) {
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.pos, fragment, "listFragment").commit();
-		return fragment;
+		return (ListFragment) fragment;
 	}
 
 
@@ -378,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
 		// new listFragment --> memory ???
 
 		dbHelper.newInsert("제목없음", currentCategory);
-		showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
+		currentFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 	}
 
 
@@ -429,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
 	public void makeListFragmentByCategory()
 	{
-		showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+		currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
 	}
 
 	public void refreshToolbarCategoryTitle()
@@ -437,12 +436,6 @@ public class MainActivity extends AppCompatActivity {
 		tvToolbarCategoryTitle.setText(currentCategory);
 	}
 
-	public void requestFocusOnFocusLinearLayout()
-	{
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.focusLinearLayout);
-		linearLayout.requestFocus();
-		System.out.println("LinearLayout has focus: " + linearLayout.hasFocus());
-	}
 
 
 

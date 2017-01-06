@@ -10,7 +10,6 @@
 
 
     <EditText
-        android:maxLength="12"
         android:lines="1"
         android:layout_marginTop="20dp"
         android:id="@+id/et_modifyingMemoTitle"
@@ -54,7 +53,7 @@
             android:layout_weight="0.5"
             android:layout_height="match_parent"
             android:background="@drawable/dialog_complete"
-            android:textColor="#101818"
+            android:textColor="#ffffff"
             android:textSize = "20sp"
             android:text="완료" />
     </LinearLayout>
