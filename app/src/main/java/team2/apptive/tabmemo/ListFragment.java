@@ -1,16 +1,11 @@
 package team2.apptive.tabmemo;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,15 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 
@@ -108,11 +100,6 @@ public class ListFragment extends Fragment {
 				}
 
 
-				// 새로 추가한 메모가 결과적으로 빈 메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거하기
-//				else if (!isAddedNewMemo) {
-//					Log.d(tag, "새로 추가된 메모가 빈메모이고 삭제된 후 그 밑에있던 메모가 펼쳐지는 경우 제거");
-//					listView.collapseGroupWithAnimation(0);
-//				}
 
 //				Log.d(tag, "Focus of clicked view: " + v.hasFocus());
 //				Log.d(tag, "CurrentFocusView: " + ((Activity)listView.getContext()).getCurrentFocus());
@@ -179,22 +166,46 @@ public class ListFragment extends Fragment {
 					@Override
 					public void onClick(View v) {
 //						Log.d("TitleDialog", "Delete");
-						for(int i = realGroupPosition; i < items.size(); i++) // More natural view for deleting memo
-						{
-							if(listView.isGroupExpanded(i + 1))
-							{
-								listView.expandGroup(i);
-							}
-							else if(!listView.isGroupExpanded(i+1))
-							{
-								listView.collapseGroup(i);
-							}
-						}
 
-						dbHelper.deleteByTime(items.get(realGroupPosition).id);
-						items.remove(realGroupPosition);
-						adapter.notifyDataSetChanged();
-						memoTitleDialog.dismiss();
+						DeleteConfirmDialog deleteConfirmDialogMaker = new DeleteConfirmDialog(inflater, null, null);
+						final Dialog deleteConfirmDialog = deleteConfirmDialogMaker.createDialog();
+
+						View.OnClickListener confirmDelete = new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								for(int i = realGroupPosition; i < items.size(); i++) // More natural view for deleting memo
+								{
+									if(listView.isGroupExpanded(i + 1))
+									{
+										listView.expandGroup(i);
+									}
+									else if(!listView.isGroupExpanded(i+1))
+									{
+										listView.collapseGroup(i);
+									}
+								}
+
+								dbHelper.deleteByTime(items.get(realGroupPosition).id);
+								items.remove(realGroupPosition);
+								adapter.notifyDataSetChanged();
+								memoTitleDialog.dismiss();
+								deleteConfirmDialog.dismiss();
+							}
+						};
+
+						View.OnClickListener cancelDelete = new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								memoTitleDialog.dismiss();
+								deleteConfirmDialog.dismiss();
+							}
+						};
+
+						deleteConfirmDialogMaker.setConfirmClickListener(confirmDelete);
+						deleteConfirmDialogMaker.setCancelClickListener(cancelDelete);
+
+						deleteConfirmDialog.show();
+
 					}
 				});
 
@@ -328,6 +339,7 @@ public class ListFragment extends Fragment {
 				item.cItems.add(citem); // connect with item and citem
 
 				items.add(item); // inserting to array
+
 			}
 		}
 

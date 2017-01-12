@@ -1,18 +1,13 @@
 package team2.apptive.tabmemo;
 
-import android.app.Activity;
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -74,7 +69,7 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			holder = (ExpandableItem.ChildHolder) convertView.getTag();
 		}
 
-		if(groupPosition == editingGroupPosition)
+//		if(groupPosition == editingGroupPosition)
 //			Log.d(tag, "has focus: " + holder.memo.hasFocus());
 
 		// Set memo content

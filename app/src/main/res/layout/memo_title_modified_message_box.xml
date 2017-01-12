@@ -37,15 +37,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <Button
-            android:id="@+id/bt_deleteMemo"
-            android:layout_width="0dp"
-            android:layout_weight="0.5"
-            android:layout_height="match_parent"
-            android:background="@drawable/dialog_delete"
-            android:textColor="#8a8a8a"
-            android:textSize = "20sp"
-            android:text="삭제" />
+       <!--서로 위치 변경함-->
 
         <Button
             android:id="@+id/bt_confirmTitle"
@@ -55,6 +47,16 @@
             android:background="@drawable/dialog_complete"
             android:textColor="#ffffff"
             android:textSize = "20sp"
-            android:text="완료" />
+            android:text="@string/complete" />
+
+        <Button
+            android:id="@+id/bt_deleteMemo"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:background="@drawable/dialog_delete"
+            android:textColor="#8a8a8a"
+            android:textSize = "20sp"
+            android:text="@string/delete" />
     </LinearLayout>
 </LinearLayout>

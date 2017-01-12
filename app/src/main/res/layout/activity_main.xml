@@ -117,7 +117,8 @@
 					android:text="-"
 					android:textSize="20dp"
 					android:lines="1"
-					android:layout_gravity="center"/>
+					android:layout_gravity="center"
+					android:textColor="#ffffff"/>
 		</FrameLayout>
 
 	</android.support.design.widget.AppBarLayout>

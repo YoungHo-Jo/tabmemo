@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
 						"title TEXT, memo TEXT, childMemo TEXT, category TEXT, stared INTEGER, time TEXT, position TEXT);");
 
 		Long time = System.currentTimeMillis();
-		String initTitle = "저는 제목이에요. 길게 눌러보세요.";
+		String initTitle = "저는 제목이에요 길게 눌러보세요";
 		String initCategory = "탭메모";
 		String initMemo = "여기를 누르면 메모를 수정할 수 있어요.\n\n수정이 끝난 후 제목을 눌러보세요.\n\n다른 메모가 있다면 다른 메모를 눌러도 좋아요.";
 		db.execSQL("insert into MEMO values(null, '" + initTitle + "', '" + initMemo + "', null, '" + initCategory + "', 0, " + time.toString() + ", " + time.toString() + ");");

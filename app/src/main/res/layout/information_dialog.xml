@@ -6,30 +6,37 @@
 							android:background="@drawable/dialog_new"
 							android:layout_alignParentTop="true"
 							android:layout_centerHorizontal="true">
-
-
-	<TextView
-			android:layout_marginTop="20dp"
-			android:layout_width="200dp"
-			android:layout_height="wrap_content"
-			android:text="@string/apptive"
-			android:textColor="#111111"
-			android:textStyle="bold"
-			android:textSize="15dp"
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
 			android:layout_gravity="center"
-			android:textAlignment="center"/>
+			android:layout_marginTop="15dp"
+			android:layout_marginBottom="15dp">
 
-	<TextView
-			android:layout_marginTop="10dp"
-			android:layout_marginBottom="20dp"
-			android:layout_width="200dp"
-			android:layout_gravity="center"
-			android:layout_height="wrap_content"
-			android:background="@null"
-			android:gravity="center"
-			android:textColor="#111111"
-			android:textSize="15dp"
-			android:text="@string/information"/>
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_gravity="center"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="5dp"
+				android:background="@null"
+				android:gravity="center"
+				android:textColor="#2696a1"
+				android:textSize="13dp"
+				android:text="@string/maker"/>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_gravity="center"
+				android:layout_height="wrap_content"
+				android:background="@null"
+				android:gravity="center"
+				android:textColor="#516768"
+				android:textSize="13dp"
+				android:text="@string/information"
+				android:lineSpacingExtra="3dp"/>
+
+	</LinearLayout>
 
 	<LinearLayout
 			android:layout_width="fill_parent"

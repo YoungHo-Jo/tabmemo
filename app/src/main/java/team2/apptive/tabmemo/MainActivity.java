@@ -2,24 +2,16 @@ package team2.apptive.tabmemo;
 
 import android.app.Dialog;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,19 +21,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 	private final long FINISH_INTERVAL_TIME = 2000;
 
 	private Dialog mMainDialog; // Dialog for adding or modifying a category
+	private Dialog deleteConfirmDialog;
 	private ListFragment currentFragment = null;
 
 	private long backPressedTime = 0;
@@ -215,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
 	private View.OnClickListener addNewMemoButtonListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			currentFragment.getAdapter().initializeFocusAndPos();
 			onAddNewMemoClick();
 		}
 	};
@@ -270,10 +261,13 @@ public class MainActivity extends AppCompatActivity {
 					Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
 				}
 				else {
-					if (modify) {
+					if (modify)
+					{
 						categoryItems.set(category_position, categoryName);
 						dbHelper.updateCategoryName(categoryTitle, categoryName);
-					} else {
+					}
+					else
+					{
 						categoryItems.add(categoryName);
 						dbHelper.newInsert("제목없음", categoryName);
 					}
@@ -311,35 +305,69 @@ public class MainActivity extends AppCompatActivity {
 		// Delete Button
 		left_bt.setOnClickListener(new View.OnClickListener() {
 			@Override
-        public void onClick(View v) {
-
-
-				if(categoryItems.size() == 1)
+        public void onClick(View v)
 				{
-					Toast.makeText(v.getContext(), "삭제 할 수 없습니다.", Toast.LENGTH_SHORT).show();
-					setDismiss(mMainDialog);
-					return;
+
+					DeleteConfirmDialog deleteConfirmDialogMaker = new DeleteConfirmDialog(getLayoutInflater(), null, null);
+					deleteConfirmDialog = deleteConfirmDialogMaker.createDialog();
+
+
+					View.OnClickListener deleteConfirm = new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							if(categoryItems.size() == 1)
+							{
+								Toast.makeText(v.getContext(), "삭제 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+								setDismiss(deleteConfirmDialog);
+								setDismiss(mMainDialog);
+								return;
+							}
+
+							try
+							{
+								dbHelper.deleteCategory(categoryItems.get(category_position));
+								categoryItems.remove(category_position);
+							}
+							catch (IndexOutOfBoundsException e)
+							{
+								Toast.makeText(v.getContext(), "삭제 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+							}
+							finally
+							{
+								setDismiss(deleteConfirmDialog);
+								setDismiss(mMainDialog);
+							}
+
+							setCurrentCategory(categoryItems.get(0));
+
+							refreshToolbarCategoryTitle();
+
+							currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
+
+							categoryListAdapter.notifyDataSetChanged();
+
+//							setDismiss(deleteConfirmDialog);
+//							setDismiss(mMainDialog);
+						}
+					};
+
+					View.OnClickListener deleteCancel = new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							setDismiss(deleteConfirmDialog);
+							setDismiss(mMainDialog);
+						}
+					};
+
+					// Set Click Listener
+					deleteConfirmDialogMaker.setConfirmClickListener(deleteConfirm);
+					deleteConfirmDialogMaker.setCancelClickListener(deleteCancel);
+
+					// Show
+					deleteConfirmDialog.show();
+
+
 				}
-
-				try {
-					dbHelper.deleteCategory(categoryItems.get(category_position));
-					categoryItems.remove(category_position);
-				}
-				catch (IndexOutOfBoundsException e)
-				{
-					System.out.println("Exception: " + e);
-					Toast.makeText(v.getContext(), "삭제 할 수 없습니다.", Toast.LENGTH_SHORT).show();
-				}
-					setCurrentCategory(categoryItems.get(0));
-
-					refreshToolbarCategoryTitle();
-
-					currentFragment = showFragment(ListFragment.newInstance().setCategoryForListView(currentCategory));
-
-					categoryListAdapter.notifyDataSetChanged();
-					setDismiss(mMainDialog);
-
-			}
 		});
 
 
@@ -374,8 +402,6 @@ public class MainActivity extends AppCompatActivity {
 	// 새 매모 버튼 클릭 시 사용될 함수
 	private void onAddNewMemoClick() {
 		// (수정필요) 새 메모 타이틀은 여기서
-		// ((ListFragment) listFragment).addNewTitleMemo("No Title", "");
-		// new listFragment --> memory ???
 
 		dbHelper.newInsert("제목없음", currentCategory);
 		currentFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
