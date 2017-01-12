@@ -1,7 +1,10 @@
 package team2.apptive.tabmemo;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -63,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
 		categoryListView.setAdapter(categoryListAdapter);
 		categoryListView.setMinimumHeight(20);
-		// categoryListView.setPadding(5, 0, 0, 0);
 
 
 		// Open DB
@@ -227,10 +230,8 @@ public class MainActivity extends AppCompatActivity {
 			goToMarketButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(v.getContext(), "go to market", Toast.LENGTH_SHORT).show();
-
-//					String str ="https://play.google.com/store/apps/details?id=com.zeustechnocrats.quickfoods";
-//					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(str)));
+					String marketAddress ="https://play.google.com/store/apps/details?id=team2.apptive.tabmemo";
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(marketAddress)));
 				}
 			});
 
@@ -315,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
 					View.OnClickListener deleteConfirm = new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							// Exception (카테고리가 하나만 남아 있을 경우 --> 삭제 불가)
 							if(categoryItems.size() == 1)
 							{
 								Toast.makeText(v.getContext(), "삭제 할 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -401,8 +403,6 @@ public class MainActivity extends AppCompatActivity {
 
 	// 새 매모 버튼 클릭 시 사용될 함수
 	private void onAddNewMemoClick() {
-		// (수정필요) 새 메모 타이틀은 여기서
-
 		dbHelper.newInsert("제목없음", currentCategory);
 		currentFragment = showFragment(ListFragment.newInstance().setIsAddedNewMemo(true).setCategoryForListView(currentCategory));
 	}
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
 			drawer.closeDrawer(GravityCompat.START);
 		} else {
 			// 종료 옵션
-			if (0 <= intervalTime && FINISH_INTERVAL_TIME >= intervalTime)
+			if (0 <= intervalTime && intervalTime <= FINISH_INTERVAL_TIME)
 				super.onBackPressed();
 			else {
 				backPressedTime = tempTime;
@@ -438,10 +438,7 @@ public class MainActivity extends AppCompatActivity {
 		// 나중에 여기에서 isstared과 time 을 잘 조합해서 출력하면 중요표시된것도 가능
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select distinct category from MEMO order by time asc", null);
 		while (cursor.moveToNext()) {
-			System.out.println(cursor.getColumnCount());
 			String category = cursor.getString(0); // db: category
-			if(category.equals("전체 메모"))
-				continue;
 
 			items.add(category); // new categoryItems for category
 		}

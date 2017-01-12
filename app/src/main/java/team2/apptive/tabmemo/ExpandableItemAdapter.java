@@ -1,16 +1,20 @@
 package team2.apptive.tabmemo;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.List;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by solar on 2016-11-20.
@@ -24,6 +28,8 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 	private List<ExpandableItem.GroupItem> items;
 	private ExpandableItem.ChildHolder holder;
 	private DBHelper dbHelper;
+
+	private InputMethodManager inputMethodManager;
 
 	private EditableTextView editingView = null;
 
@@ -74,6 +80,9 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 		// Set memo content
 		holder.memo.setText(item.memo);
+
+		// Get InputMethodManager for controlling keyboard
+		inputMethodManager = (InputMethodManager) holder.memo.getContext().getSystemService(INPUT_METHOD_SERVICE); // for keyboard
 
 		// 메모 수정 클릭
 //		holder.memo.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +145,6 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 
 				// Open DB
 				dbHelper = new DBHelper(focusedEditView.getContext(), "Memo.db", null, 1);
-
-				// Get InputMethodManager for controlling keyboard
-				InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE); // for keyboard
 
 
 				// This is edit mode
@@ -230,6 +236,15 @@ public class ExpandableItemAdapter extends AnimatedExpandableListView.AnimatedEx
 			isEditingMemo = true;
 			editingGroupPosition = 0;
 			editingView = holder.memo;
+
+			// 이 상태에서는 키보드가 제대로 올라가지 않아, Thread를 이용해서, delay 주어, 포커스가 잡힌 뒤에 올리는 방법을 사용
+			// fragment 를 다시 불러오지 않고 하는 방법을 사용하면 그냥 키보드를 부르면 가능
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					inputMethodManager.showSoftInput(holder.memo, InputMethodManager.SHOW_IMPLICIT);
+				}
+			}, 100);
+
 		}
 
 		// Control memos that is not in edit mode

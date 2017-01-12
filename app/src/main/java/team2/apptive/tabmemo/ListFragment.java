@@ -1,6 +1,7 @@
 package team2.apptive.tabmemo;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -390,6 +392,11 @@ public class ListFragment extends Fragment {
 		}
 
 		return realEditingMemoPosition + editingGroupPositionInAdapter;
+	}
+
+	public AnimatedExpandableListView getListView()
+	{
+		return listView;
 	}
 
 }
